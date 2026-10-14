@@ -60,18 +60,38 @@ const jsonLd = {
   <!-- Canonical -->
   <link rel="canonical" href="https://simplerelay.dev/" />
 
-  <!-- Favicon: |> icon representing Persist & Deliver -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='10' width='14' height='80' rx='3' fill='%230066cc'/><polygon points='30,50 80,20 80,80' fill='%230066cc'/></svg>" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
   <!-- Inter font (closest open-source equivalent to SF Pro) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
+  <!-- Lucide Icons CDN -->
+  <script is:inline src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <style is:global>
+    .lucide {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
 </head>
 <body class="font-sans text-ink bg-canvas antialiased">
   <slot />
+
+  <script is:inline>
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
 </body>
 </html>

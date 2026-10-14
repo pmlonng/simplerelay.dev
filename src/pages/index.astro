@@ -6,39 +6,39 @@ const GITHUB_URL = "https://github.com/simple-relay/simple-relay";
 const DOCS_URL = "#docs";
 const GITHUB_STARS = "⭐ Star";
 
-// Simple Icons SVG paths (grayscale via CSS filter)
+// Verified official brand SVG paths (Simple Icons & Lucide)
 const socialProofLogos = [
   {
     name: "Stripe",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></svg>`,
   },
   {
     name: "Shopify",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.337 23.979l7.046-1.567s-2.537-17.152-2.559-17.285c-.022-.13-.13-.217-.239-.217-.108 0-2.168-.043-2.168-.043s-1.449-1.449-1.601-1.601v20.713zm-2.963.021L12 .608S10.688.697 10.395.836c-.285.13-2.05 1.994-2.05 1.994S6.264 2.917 5.83 3.09c-.434.174-.652.478-.717.782-.065.304-1.363 9.674-1.363 9.674l8.624 10.454z"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg>`,
   },
   {
     name: "GitHub",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/></svg>`,
   },
   {
     name: "Slack",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>`,
   },
   {
     name: "LINE",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>`,
   },
   {
     name: "Messenger",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.652V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.1l3.131 3.26L19.752 8.1l-6.561 6.863z"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.24 0 0 4.952 0 11.64c0 3.499 1.434 6.521 3.769 8.61a.96.96 0 0 1 .323.683l.065 2.135a.96.96 0 0 0 1.347.85l2.381-1.053a.96.96 0 0 1 .641-.046A13 13 0 0 0 12 23.28c6.76 0 12-4.952 12-11.64S18.76 0 12 0m6.806 7.44c.522-.03.971.567.63 1.094l-4.178 6.457a.707.707 0 0 1-.977.208l-3.87-2.504a.44.44 0 0 0-.49.007l-4.363 3.01c-.637.438-1.415-.317-.995-.966l4.179-6.457a.706.706 0 0 1 .977-.21l3.87 2.505c.15.097.344.094.491-.007l4.362-3.008a.7.7 0 0 1 .364-.13"/></svg>`,
   },
   {
     name: "PayPal",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.26-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.477z"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.607 4.653H8.941L6.645 19.251H1.82L4.862 0h7.995c3.754 0 6.375 2.294 6.473 5.513-.648-.478-2.105-.86-3.722-.86m6.57 5.546c0 3.41-3.01 6.853-6.958 6.853h-2.493L11.595 24H6.74l1.845-11.538h3.592c4.208 0 7.346-3.634 7.153-6.949a5.24 5.24 0 0 1 2.848 4.686M9.653 5.546h6.408c.907 0 1.942.222 2.363.541-.195 2.741-2.655 5.483-6.441 5.483H8.714Z"/></svg>`,
   },
   {
     name: "Webhooks",
-    svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.952 0C5.35 0 0 5.35 0 11.952c0 6.602 5.35 11.952 11.952 11.952 6.602 0 11.952-5.35 11.952-11.952C23.904 5.35 18.554 0 11.952 0zM8.527 17.474a1.236 1.236 0 0 1-1.746 0l-2.49-2.49a1.236 1.236 0 0 1 0-1.747L7.017 10.5 4.291 7.773a1.236 1.236 0 0 1 1.746-1.746l3.6 3.6a1.236 1.236 0 0 1 0 1.746l-2.727 2.727 1.617 1.618a1.236 1.236 0 0 1 0 1.756zm9.656-2.49-3.6 3.6a1.236 1.236 0 0 1-1.746-1.747l2.727-2.727-1.617-1.617a1.236 1.236 0 0 1 0-1.747l2.727-2.727-1.617-1.617a1.236 1.236 0 0 1 1.746-1.747l2.49 2.49a1.236 1.236 0 0 1 0 1.747L16.566 10.5l2.49 2.49a1.236 1.236 0 0 1-.873 2.11 1.22 1.22 0 0 1-.873-.116z"/></svg>`,
+    svg: `<svg class="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2"/><path d="m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06"/><path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"/></svg>`,
   },
 ];
 ---
@@ -79,11 +79,11 @@ const socialProofLogos = [
           rel="noopener noreferrer"
           class="flex items-center gap-2 bg-[#1d1d1f] text-white text-[13px] px-4 py-2 rounded-[8px] hover:bg-[#2d2d2f] transition-colors duration-150"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
           </svg>
           GitHub
-          <span class="text-[#6e6e73] text-[11px]">★</span>
+          <i data-lucide="star" class="w-3 h-3 text-[#6e6e73] fill-current"></i>
         </a>
       </div>
     </div>
@@ -120,19 +120,17 @@ const socialProofLogos = [
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 bg-primary text-white text-[17px] font-normal px-[22px] py-[11px] rounded-pill hover:bg-[#0077ed] active:scale-95 transition-all duration-150"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
           </svg>
           View on GitHub
         </a>
         <a
           href={DOCS_URL}
-          class="inline-flex items-center gap-1 text-primary text-[17px] font-normal px-[22px] py-[11px] rounded-pill border border-primary hover:bg-[#f0f6ff] active:scale-95 transition-all duration-150"
+          class="inline-flex items-center gap-1.5 text-primary text-[17px] font-normal px-[22px] py-[11px] rounded-pill border border-primary hover:bg-[#f0f6ff] active:scale-95 transition-all duration-150"
         >
           Read the Docs
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </a>
       </div>
 
@@ -173,10 +171,7 @@ const socialProofLogos = [
             onclick="copyQuickstartCommand()"
             aria-label="Copy command to clipboard"
           >
-            <svg id="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
+            <i data-lucide="copy" class="w-3.5 h-3.5" id="copy-icon"></i>
             <span id="copy-text">Copy</span>
           </button>
         </div>
@@ -277,12 +272,11 @@ const socialProofLogos = [
     </div>
 
     <!-- Static logo strip -->
-    <div class="w-full max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-center gap-x-10 sm:gap-x-14 md:gap-x-16 gap-y-8" aria-hidden="true">
+    <div class="w-full max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-center gap-x-10 sm:gap-x-14 md:gap-x-16 gap-y-10" aria-hidden="true">
       {socialProofLogos.map((logo) => (
-        <div class="flex flex-col items-center gap-2 opacity-40 hover:opacity-70 transition-opacity duration-300">
-          <div class="w-10 h-10 flex items-center justify-center" set:html={logo.svg}
-            style="filter: grayscale(100%);" />
-          <span class="text-[11px] text-[#6e6e73] font-medium tracking-[0.05em] uppercase">{logo.name}</span>
+        <div class="flex flex-col items-center gap-2.5 opacity-50 hover:opacity-100 transition-opacity duration-200 group">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-[#1d1d1f] group-hover:text-primary transition-colors duration-200" set:html={logo.svg} />
+          <span class="text-[12px] text-[#6e6e73] group-hover:text-ink font-medium tracking-[0.04em] uppercase transition-colors duration-200">{logo.name}</span>
         </div>
       ))}
     </div>
@@ -320,25 +314,23 @@ const socialProofLogos = [
           <!-- Old flow diagram -->
           <div class="space-y-2">
             {[
-              { icon: "🌐", label: "Your App", color: "text-white" },
+              { icon: "globe", label: "Your App", color: "text-white" },
               null,
-              { icon: "📨", label: "Message Queue / Redis", color: "text-[#a1a1a6]", note: "operational overhead" },
+              { icon: "layers", label: "Message Queue / Redis", color: "text-[#a1a1a6]", note: "operational overhead" },
               null,
-              { icon: "⚙️", label: "Worker Service", color: "text-[#a1a1a6]", note: "separate deployment" },
+              { icon: "cpu", label: "Worker Service", color: "text-[#a1a1a6]", note: "separate deployment" },
               null,
-              { icon: "🗄️", label: "Postgres / DB", color: "text-[#a1a1a6]", note: "another dependency" },
+              { icon: "database", label: "Postgres / DB", color: "text-[#a1a1a6]", note: "another dependency" },
               null,
-              { icon: "🎯", label: "Destination API", color: "text-white" },
+              { icon: "server", label: "Destination API", color: "text-white" },
             ].map((item) =>
               item === null ? (
-                <div class="flex justify-center">
-                  <svg class="text-[#6e6e73] animate-flow-right" width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true">
-                    <path d="M8 0v14M2 10l6 8 6-8"/>
-                  </svg>
+                <div class="flex justify-center py-0.5">
+                  <i data-lucide="arrow-down" class="w-4 h-4 text-[#6e6e73]"></i>
                 </div>
               ) : (
-                <div class={`flex items-center gap-3 px-3 py-2 rounded-[8px] bg-[#1d1d1f]/60`}>
-                  <span class="text-[16px]">{item.icon}</span>
+                <div class="flex items-center gap-3 px-3 py-2 rounded-[8px] bg-[#1d1d1f]/60">
+                  <i data-lucide={item.icon} class={`w-4 h-4 shrink-0 ${item.color}`}></i>
                   <div>
                     <span class={`text-[14px] font-medium ${item.color}`}>{item.label}</span>
                     {item.note && <p class="text-[#6e6e73] text-[11px] mt-0.5">{item.note}</p>}
@@ -364,21 +356,19 @@ const socialProofLogos = [
           <!-- Simple Relay flow -->
           <div class="space-y-2">
             {[
-              { icon: "🌐", label: "Your App", color: "text-white" },
+              { icon: "globe", label: "Your App", color: "text-white" },
               null,
-              { icon: "⚡", label: "Simple Relay", color: "text-white", note: "one binary · embedded storage", highlight: true },
+              { icon: "zap", label: "Simple Relay", color: "text-white", note: "one binary · embedded storage", highlight: true },
               null,
-              { icon: "🎯", label: "Destination API", color: "text-white" },
+              { icon: "server", label: "Destination API", color: "text-white" },
             ].map((item) =>
               item === null ? (
-                <div class="flex justify-center">
-                  <svg class="text-[#2997ff] animate-flow-right" width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true">
-                    <path d="M8 0v14M2 10l6 8 6-8"/>
-                  </svg>
+                <div class="flex justify-center py-0.5">
+                  <i data-lucide="arrow-down" class="w-4 h-4 text-[#2997ff]"></i>
                 </div>
               ) : (
                 <div class={`flex items-center gap-3 px-3 py-2 rounded-[8px] ${item.highlight ? 'bg-[#0066cc]/10 border border-[#0066cc]/30' : 'bg-[#1d1d1f]/60'}`}>
-                  <span class="text-[16px]">{item.icon}</span>
+                  <i data-lucide={item.icon} class={`w-4 h-4 shrink-0 ${item.highlight ? 'text-[#2997ff]' : item.color}`}></i>
                   <div>
                     <span class={`text-[14px] font-medium ${item.color}`}>{item.label}</span>
                     {item.note && <p class="text-[#2997ff] text-[11px] mt-0.5">{item.note}</p>}
@@ -402,7 +392,7 @@ const socialProofLogos = [
               </div>
               <div class="flex items-center gap-2 text-[12px] font-mono">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot shrink-0" style="animation-delay: 1.2s" aria-hidden="true"></span>
-                <span class="text-[#a1a1a6]">Delivered ✓ — or moved to DLQ for replay</span>
+                <span class="text-[#a1a1a6] inline-flex items-center gap-1">Delivered <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> — or moved to DLQ for replay</span>
               </div>
             </div>
           </div>
@@ -413,9 +403,7 @@ const socialProofLogos = [
       <div class="mt-12 max-w-[680px] mx-auto rounded-[18px] border border-white/10 bg-[#2a2a2c] overflow-hidden aspect-video flex items-center justify-center">
         <div class="text-center">
           <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4 hover:bg-white/20 transition-colors cursor-pointer">
-            <svg class="text-white w-6 h-6 ml-1" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
+            <i data-lucide="play" class="w-6 h-6 text-white ml-0.5 fill-current"></i>
           </div>
           <p class="text-[#6e6e73] text-[14px]">Demo: Server down → SQLite persist → Auto retry → Delivered</p>
           <p class="text-[#4a4a4a] text-[12px] mt-1"><!-- VIDEO_DEMO_PLACEHOLDER --></p>
@@ -442,9 +430,7 @@ const socialProofLogos = [
         <!-- Feature 1: Persist before ACK -->
         <article class="bg-parchment rounded-card p-8 border border-divider">
           <div class="w-10 h-10 bg-[#e8f0fb] rounded-[10px] flex items-center justify-center mb-5">
-            <svg class="text-primary w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
+            <i data-lucide="shield-check" class="w-5 h-5 text-primary"></i>
           </div>
           <h3 class="text-ink text-[21px] font-semibold leading-[1.19] tracking-[-0.022em] mb-3">
             Persist before ACK
@@ -457,9 +443,7 @@ const socialProofLogos = [
         <!-- Feature 2: Smart Delivery Engine -->
         <article class="bg-parchment rounded-card p-8 border border-divider">
           <div class="w-10 h-10 bg-[#e8f0fb] rounded-[10px] flex items-center justify-center mb-5">
-            <svg class="text-primary w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-            </svg>
+            <i data-lucide="zap" class="w-5 h-5 text-primary"></i>
           </div>
           <h3 class="text-ink text-[21px] font-semibold leading-[1.19] tracking-[-0.022em] mb-3">
             Smart Delivery Engine
@@ -472,9 +456,7 @@ const socialProofLogos = [
         <!-- Feature 3: Dead Letter Queue -->
         <article class="bg-parchment rounded-card p-8 border border-divider">
           <div class="w-10 h-10 bg-[#e8f0fb] rounded-[10px] flex items-center justify-center mb-5">
-            <svg class="text-primary w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-            </svg>
+            <i data-lucide="archive" class="w-5 h-5 text-primary"></i>
           </div>
           <h3 class="text-ink text-[21px] font-semibold leading-[1.19] tracking-[-0.022em] mb-3">
             Dead Letter Queue
@@ -487,10 +469,7 @@ const socialProofLogos = [
         <!-- Feature 4: Embedded Web UI -->
         <article class="bg-parchment rounded-card p-8 border border-divider">
           <div class="w-10 h-10 bg-[#e8f0fb] rounded-[10px] flex items-center justify-center mb-5">
-            <svg class="text-primary w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <path d="M3 9h18M9 21V9"/>
-            </svg>
+            <i data-lucide="layout-dashboard" class="w-5 h-5 text-primary"></i>
           </div>
           <h3 class="text-ink text-[21px] font-semibold leading-[1.19] tracking-[-0.022em] mb-3">
             Embedded Web UI
@@ -602,7 +581,7 @@ const socialProofLogos = [
         </div>
 
         <div class="mt-4 pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-[#a1a1a6]">
-          <span>✨ Zero Node.js build pipeline &bull; Compiled directly into binary via <code class="text-white">go:embed</code></span>
+          <span class="flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i> Zero Node.js build pipeline &bull; Compiled directly into binary via <code class="text-white">go:embed</code></span>
           <span class="text-primary-dark">Password-protected admin session &amp; CSRF safe</span>
         </div>
       </div>
@@ -633,7 +612,7 @@ const socialProofLogos = [
               <th class="py-4 px-6 text-[13px] font-medium text-[#6e6e73]">In-App SDK Retries<br/><span class="text-[11px] text-[#7a7a7a]">(Axios/Tenacity)</span></th>
               <th class="py-4 px-6 text-[13px] font-medium text-[#6e6e73]">Redis + Celery/BullMQ<br/><span class="text-[11px] text-[#7a7a7a]">(Heavy Queues)</span></th>
               <th class="py-4 px-6 text-[13px] font-semibold text-primary bg-primary/5 border-l border-r border-primary/20">
-                Simple Relay<br/><span class="text-[11px] font-normal text-primary">★ Single Binary</span>
+                Simple Relay<br/><span class="text-[11px] font-normal text-primary flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3 h-3 text-primary shrink-0"></i> Single Binary</span>
               </th>
             </tr>
           </thead>
@@ -702,9 +681,7 @@ const socialProofLogos = [
         <!-- Use Case 1: Inbound Webhooks -->
         <article class="bg-[#2a2a2c] rounded-card p-8 border border-white/10">
           <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 bg-[#2997ff]/10 rounded-pill">
-            <svg class="text-[#2997ff] w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zM2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
-            </svg>
+            <i data-lucide="globe" class="w-3.5 h-3.5 text-[#2997ff]"></i>
             <span class="text-[#2997ff] text-[13px] font-semibold">Inbound Webhooks</span>
           </div>
           <h3 class="text-white text-[21px] font-semibold leading-[1.19] tracking-[-0.022em] mb-3">
@@ -721,9 +698,7 @@ const socialProofLogos = [
               "Background worker delivery with retry",
             ].map((item) => (
               <li class="flex items-start gap-3 text-[14px] text-[#a1a1a6]">
-                <svg class="text-[#2997ff] w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
+                <i data-lucide="check" class="w-4 h-4 text-[#2997ff] mt-0.5 shrink-0"></i>
                 {item}
               </li>
             ))}
@@ -733,9 +708,7 @@ const socialProofLogos = [
         <!-- Use Case 2: Outbound API -->
         <article class="bg-[#2a2a2c] rounded-card p-8 border border-white/10">
           <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 bg-[#2997ff]/10 rounded-pill">
-            <svg class="text-[#2997ff] w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+            <i data-lucide="arrow-right-left" class="w-3.5 h-3.5 text-[#2997ff]"></i>
             <span class="text-[#2997ff] text-[13px] font-semibold">Outbound API Relay</span>
           </div>
           <h3 class="text-white text-[21px] font-semibold leading-[1.19] tracking-[-0.022em] mb-3">
@@ -752,9 +725,7 @@ const socialProofLogos = [
               "Idempotency key propagation",
             ].map((item) => (
               <li class="flex items-start gap-3 text-[14px] text-[#a1a1a6]">
-                <svg class="text-[#2997ff] w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
+                <i data-lucide="check" class="w-4 h-4 text-[#2997ff] mt-0.5 shrink-0"></i>
                 {item}
               </li>
             ))}
@@ -815,12 +786,9 @@ const socialProofLogos = [
   ═══════════════════════════════════════════════ -->
   <section class="w-full bg-canvas py-[80px] px-5" aria-labelledby="security-heading">
     <div class="max-w-[680px] mx-auto text-center">
-      <!-- Lock icon -->
+      <!-- Shield icon -->
       <div class="w-16 h-16 bg-[#e8f0fb] rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg class="text-primary w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-          <path d="M7 11V7a5 5 0 0110 0v4"/>
-        </svg>
+        <i data-lucide="shield-check" class="w-8 h-8 text-primary"></i>
       </div>
 
       <h2 id="security-heading" class="text-[clamp(28px,5vw,40px)] font-semibold text-ink leading-[1.1] tracking-[-0.022em] mb-5">
@@ -833,13 +801,15 @@ const socialProofLogos = [
       <!-- Trust badges -->
       <div class="flex flex-wrap justify-center gap-4 mb-10">
         {[
-          { icon: "🔒", label: "Self-hosted", desc: "Your infrastructure" },
-          { icon: "📦", label: "Open Source", desc: "Always free" },
-          { icon: "🚫", label: "No telemetry", desc: "Zero data collection" },
-          { icon: "⚡", label: "CGO_ENABLED=0", desc: "Pure static binary" },
+          { icon: "server", label: "Self-hosted", desc: "Your infrastructure" },
+          { icon: "package", label: "Open Source", desc: "Always free" },
+          { icon: "eye-off", label: "No telemetry", desc: "Zero data collection" },
+          { icon: "cpu", label: "CGO_ENABLED=0", desc: "Pure static binary" },
         ].map((badge) => (
-          <div class="flex flex-col items-center gap-1 px-5 py-4 bg-parchment rounded-card border border-divider min-w-[120px]">
-            <span class="text-2xl">{badge.icon}</span>
+          <div class="flex flex-col items-center gap-1.5 px-5 py-4 bg-parchment rounded-card border border-divider min-w-[130px]">
+            <div class="w-8 h-8 flex items-center justify-center text-primary mb-0.5">
+              <i data-lucide={badge.icon} class="w-5 h-5"></i>
+            </div>
             <span class="text-ink font-semibold text-[14px]">{badge.label}</span>
             <span class="text-[#6e6e73] text-[12px]">{badge.desc}</span>
           </div>
@@ -854,9 +824,7 @@ const socialProofLogos = [
           class="inline-flex items-center gap-2 bg-primary text-white text-[17px] font-normal px-[22px] py-[11px] rounded-pill hover:bg-[#0077ed] active:scale-95 transition-all duration-150"
         >
           View on GitHub
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
-          </svg>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
         </a>
       </div>
     </div>
@@ -991,8 +959,8 @@ const socialProofLogos = [
         rel="noopener noreferrer"
         class="inline-flex items-center gap-1 bg-primary text-white font-medium px-3 py-1.5 rounded-full hover:bg-[#0077ed] active:scale-95 transition-all"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
         </svg>
         <span>Star</span>
       </a>
