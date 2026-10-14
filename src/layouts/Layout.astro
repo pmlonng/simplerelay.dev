@@ -15,7 +15,7 @@ const jsonLd = {
   "name": "Simple Relay",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Linux, macOS, Windows, Docker",
-  "description": "A lightweight, self-hosted HTTP relay. Receive HTTP, forward HTTP, make delivery reliable. One binary with embedded SQLite — no external brokers or databases required.",
+  "description": "A lightweight, self-hosted HTTP relay. Receive HTTP, forward HTTP, make delivery reliable. One self-contained binary with durable embedded persistence — no external brokers or databases required.",
   "url": "https://simplerelay.dev",
   "codeRepository": "https://github.com/simple-relay/simple-relay",
   "license": "https://github.com/simple-relay/simple-relay/blob/main/LICENSE",
@@ -26,14 +26,14 @@ const jsonLd = {
     "priceCurrency": "USD"
   },
   "featureList": [
-    "Persist before ACK — data committed to SQLite WAL before 200 OK",
-    "Exponential backoff with full jitter",
-    "Dead Letter Queue with replay API",
-    "Embedded Web UI — no Node.js required",
-    "Zero external dependencies — no Redis, Kafka, or Postgres",
-    "HMAC signature verification for Stripe, GitHub, and more"
+    "Zero data loss — durable persist before ACK (< 2ms response time)",
+    "Exponential backoff with randomized full jitter",
+    "Dead Letter Queue with manual and bulk replay API",
+    "Embedded Web UI — zero separate frontend processes",
+    "Zero external infrastructure dependencies",
+    "HMAC cryptographic signature verification for Stripe, GitHub, and custom webhooks"
   ],
-  "keywords": "HTTP relay, webhook reliability, self-hosted, SQLite, retry, dead letter queue, open source"
+  "keywords": "HTTP relay, webhook reliability, self-hosted, durable persistence, zero data loss, retry, dead letter queue, open source"
 };
 ---
 
