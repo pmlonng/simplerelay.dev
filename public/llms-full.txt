@@ -1227,6 +1227,8 @@ Unlike in-memory queues that acknowledge receipt before committing to disk, Simp
 
 Below are the official benchmark measurements conducted against Release `v0.3.0`.
 
+These are Simple Relay measurements, not a head-to-head comparison with another webhook product. They show request acknowledgement and durable ingestion performance under the listed test conditions. Results depend on hardware, storage, network, configuration, and workload. Use the reproduction steps below to run the same workload in your own environment before comparing systems.
+
 ---
 
 ## 1. Concurrency & Ingestion Throughput

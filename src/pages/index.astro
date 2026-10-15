@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
 // GitHub stats placeholder — replace with real API call if desired
 const GITHUB_URL = "https://github.com/simple-relay/simple-relay";
@@ -43,51 +45,11 @@ const socialProofLogos = [
 ];
 ---
 
-<Layout>
+<Layout includeSoftwareSchema={true}>
   <!-- ═══════════════════════════════════════════════
        GLOBAL NAV — 64px, Apple-style
   ═══════════════════════════════════════════════ -->
-  <header class="sticky top-0 z-50 w-full bg-black border-b border-white/10" style="height:64px;">
-    <div class="max-w-[980px] mx-auto px-6 h-full flex items-center justify-between">
-      <!-- Logo file + "Simple Relay" wordmark -->
-      <a href="/" class="flex items-center gap-2.5 group" aria-label="Simple Relay Home">
-        <img src="/logo-dark.svg" alt="Simple Relay logo" width="36" height="36" class="shrink-0" />
-        <span class="text-white font-semibold text-[16px] tracking-[-0.014em] leading-none">
-          Simple Relay
-        </span>
-      </a>
-
-      <!-- Nav links -->
-      <nav class="hidden md:flex items-center gap-7" aria-label="Main navigation">
-        <a href="#features" class="text-[#a1a1a6] hover:text-white transition-colors duration-150 text-[13px] tracking-[-0.012em]">Features</a>
-        <a href="#use-cases" class="text-[#a1a1a6] hover:text-white transition-colors duration-150 text-[13px] tracking-[-0.012em]">Use Cases</a>
-        <a href="#alternatives" class="text-[#a1a1a6] hover:text-white transition-colors duration-150 text-[13px] tracking-[-0.012em]">Alternatives</a>
-        <a href="#guides" class="text-[#a1a1a6] hover:text-white transition-colors duration-150 text-[13px] tracking-[-0.012em]">Guides</a>
-      </nav>
-
-      <!-- CTAs -->
-      <div class="flex items-center gap-4">
-        <a
-          href={DOCS_URL}
-          class="text-[#a1a1a6] hover:text-white transition-colors duration-150 text-[13px] tracking-[-0.012em]"
-        >
-          Docs
-        </a>
-        <a
-          href={GITHUB_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center gap-2 bg-[#1d1d1f] text-white text-[13px] px-4 py-2 rounded-[8px] hover:bg-[#2d2d2f] transition-colors duration-150"
-        >
-          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/>
-          </svg>
-          GitHub
-          <i data-lucide="star" class="w-3 h-3 text-[#6e6e73] fill-current"></i>
-        </a>
-      </div>
-    </div>
-  </header>
+  <SiteHeader isHome={true} />
 
   <!-- ═══════════════════════════════════════════════
        SECTION 1 — HERO (Light tile / canvas white)
@@ -642,7 +604,7 @@ const socialProofLogos = [
               <td class="py-3.5 px-6 font-medium text-ink">Ultra-Fast Webhook ACK</td>
               <td class="py-3.5 px-6 text-red-500 font-medium">Risk timeouts</td>
               <td class="py-3.5 px-6 text-emerald-600 font-medium">Fast ACK</td>
-              <td class="py-3.5 px-6 text-primary font-semibold bg-primary/5 border-l border-r border-primary/20">&lt; 15ms Fast ACK</td>
+              <td class="py-3.5 px-6 text-primary font-semibold bg-primary/5 border-l border-r border-primary/20">Low-latency ACK after persistence · <a href="/docs/benchmarks" class="underline underline-offset-2 hover:text-ink">Benchmarks</a></td>
             </tr>
             <tr>
               <td class="py-3.5 px-6 font-medium text-ink">Dead Letter Queue &amp; Replay</td>
@@ -836,125 +798,7 @@ const socialProofLogos = [
   <!-- ═══════════════════════════════════════════════
        FOOTER (Parchment — dense link columns for SEO)
   ═══════════════════════════════════════════════ -->
-  <footer class="w-full bg-parchment border-t border-divider" aria-label="Site footer">
-    <div class="max-w-[980px] mx-auto px-5 py-16">
-      <!-- Link columns grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-12">
-
-        <!-- Alternatives (SEO anchor text) -->
-        <nav aria-labelledby="footer-alternatives">
-          <h3 id="footer-alternatives" class="text-ink text-[14px] font-semibold tracking-[-0.014em] mb-4">Alternatives</h3>
-          <ul class="space-y-2.5" role="list">
-            {[
-              { label: "Simple Relay vs Hookdeck", href: "#hookdeck-alternative" },
-              { label: "Simple Relay vs Svix", href: "#svix-alternative" },
-              { label: "Simple Relay vs Convoy", href: "#convoy-alternative" },
-              { label: "Simple Relay vs Temporal", href: "#temporal-alternative" },
-            ].map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  id={link.href.replace("#", "")}
-                  class="text-[#6e6e73] text-[14px] leading-[2] hover:text-primary transition-colors"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <!-- Guides (SEO anchor text) -->
-        <nav aria-labelledby="footer-guides">
-          <h3 id="footer-guides" class="text-ink text-[14px] font-semibold tracking-[-0.014em] mb-4">Guides</h3>
-          <ul class="space-y-2.5" role="list">
-            {[
-              { label: "How to retry Stripe Webhooks", href: "#stripe-webhook-guide" },
-              { label: "Shopify webhook delivery guarantee", href: "#shopify-webhook-guide" },
-              { label: "GitHub webhook reliability", href: "#github-webhook-guide" },
-              { label: "Self-hosting with Docker", href: "#docker-guide" },
-            ].map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  id={link.href.replace("#", "")}
-                  class="text-[#6e6e73] text-[14px] leading-[2] hover:text-primary transition-colors"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <!-- Resources -->
-        <nav aria-labelledby="footer-resources">
-          <h3 id="footer-resources" class="text-ink text-[14px] font-semibold tracking-[-0.014em] mb-4">Resources</h3>
-          <ul class="space-y-2.5" role="list">
-            {[
-              { label: "Documentation", href: DOCS_URL },
-              { label: "Changelog", href: GITHUB_URL + "/blob/main/CHANGELOG.md" },
-              { label: "Privacy", href: "#privacy" },
-            ].map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  target={link.href.startsWith("http") ? "_blank" : undefined}
-                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  class="text-[#6e6e73] text-[14px] leading-[2] hover:text-primary transition-colors"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <!-- AI Coding Agent Box -->
-        <div class="col-span-2 sm:col-span-1">
-          <div class="p-3.5 rounded-xl bg-white border border-[#e8e8ed]">
-            <div class="flex items-center gap-1.5 mb-1.5 text-xs font-semibold text-ink">
-              <span>⚡</span>
-              <span>AI Coding Agent?</span>
-            </div>
-            <p class="text-[11px] text-[#6e6e73] leading-relaxed mb-2.5">
-              Pass this URL directly to Cursor, Claude Code, or Windsurf for clean context:
-            </p>
-            <a
-              href="/llms.txt"
-              target="_blank"
-              title="https://simplerelay.dev/llms.txt"
-              class="block text-center text-[10.5px] font-mono font-medium py-1.5 px-2 rounded-md bg-[#f5f5f7] border border-[#d2d2d7] text-primary hover:bg-[#fafafc] transition-colors truncate overflow-hidden"
-            >
-              simplerelay.dev/llms.txt
-            </a>
-
-            <!-- Download Full Context (LLMs) -->
-            <div class="mt-3 pt-3 border-t border-[#e8e8ed]">
-              <a
-                href="/llms-full.txt"
-                target="_blank"
-                class="text-[11px] text-[#6e6e73] hover:text-primary transition-colors flex items-center gap-1.5 font-medium"
-              >
-                <span>📄</span>
-                <span>Download Full Context</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Divider -->
-      <div class="border-t border-divider pt-8">
-        <div class="flex items-center gap-3">
-          <img src="/logo-dark.svg" alt="Simple Relay logo" width="28" height="28" class="shrink-0" />
-          <span class="text-[#6e6e73] text-[12px]">
-            © {new Date().getFullYear()} Simple Relay. Open source project.
-          </span>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <SiteFooter />
 
   <!-- Floating Sticky Action Pill (Apple-style sub-nav/floating bar) -->
   <aside

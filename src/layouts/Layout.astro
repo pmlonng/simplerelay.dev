@@ -2,12 +2,18 @@
 interface Props {
   title?: string;
   description?: string;
+  canonicalUrl?: string;
+  includeSoftwareSchema?: boolean;
 }
 
 const {
   title = "Simple Relay — One binary. No infrastructure. Reliable HTTP delivery.",
   description = "Simple Relay is a lightweight, self-hosted HTTP relay. Persist before ACK, smart retries with exponential backoff, dead letter queue, and an embedded web UI — all in one binary with zero external dependencies.",
+  canonicalUrl,
+  includeSoftwareSchema = false,
 } = Astro.props;
+
+const resolvedCanonicalUrl = canonicalUrl ?? new URL(Astro.url.pathname, Astro.site ?? "https://simplerelay.dev").href;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -26,7 +32,7 @@ const jsonLd = {
     "priceCurrency": "USD"
   },
   "featureList": [
-    "Zero data loss — durable persist before ACK (< 2ms response time)",
+    "Durable persistence before webhook ACK",
     "Exponential backoff with randomized full jitter",
     "Dead Letter Queue with manual and bulk replay API",
     "Embedded Web UI — zero separate frontend processes",
@@ -47,7 +53,7 @@ const jsonLd = {
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://simplerelay.dev/" />
+  <meta property="og:url" content={resolvedCanonicalUrl} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:site_name" content="Simple Relay" />
@@ -58,7 +64,7 @@ const jsonLd = {
   <meta name="twitter:description" content={description} />
 
   <!-- Canonical -->
-  <link rel="canonical" href="https://simplerelay.dev/" />
+  <link rel="canonical" href={resolvedCanonicalUrl} />
 
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -76,7 +82,7 @@ const jsonLd = {
   <script is:inline src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 
   <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  {includeSoftwareSchema && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
   <style is:global>
     .lucide {
