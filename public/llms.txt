@@ -14,7 +14,7 @@ Simple Relay is a lightweight, self-hosted reliability layer for HTTP traffic. I
 - [Recipe: Stripe & GitHub Webhooks](https://simplerelay.dev/docs/stripe-github): HMAC-SHA256 signature verification recipes and route definitions.
 - [Recipe: 429 & Rate Limits](https://simplerelay.dev/docs/rate-limits-429): Surviving API rate limits, parsing Retry-After header (seconds & HTTP dates).
 - [Recipe: Production Deployment](https://simplerelay.dev/docs/production-deploy): Docker Compose, Systemd unit, Litestream S3 streaming replication.
-- [Configuration Reference](https://simplerelay.dev/docs/configuration): CLI flags, environment variables matrix, YAML configuration file specs.
+- [Configuration Reference](https://simplerelay.dev/docs/configuration): CLI flags, environment variables matrix, and route configuration specs.
 - [REST API Reference](https://simplerelay.dev/docs/api-reference): Webhook ingest, proxy endpoints, DLQ inspection, replay API, health check.
 - [Embedded Web UI](https://simplerelay.dev/docs/embedded-ui): Real-time delivery logs, payload inspection, attempt history, DLQ replay.
 - [CLI Reference](https://simplerelay.dev/docs/cli-reference): Standalone relay-cli inspection binary, health probes, queue depth monitoring, and headless DLQ replay.

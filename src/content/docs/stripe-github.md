@@ -15,22 +15,25 @@ Stripe secures webhooks using HMAC-SHA256 signatures passed in the `Stripe-Signa
 
 ### Route Configuration
 
-In your route configuration file (`relay.yaml`) or environment:
+Register the Stripe inbound route via `POST /api/v1/routes`:
 
-```yaml
-routes:
-  - name: "stripe-payments"
-    path: "/api/v1/webhook/stripe"
-    destination: "http://app-backend:8000/webhooks/stripe"
-    signature:
-      provider: "stripe"
-      secret_env: "STRIPE_WEBHOOK_SECRET"
-      tolerance_seconds: 300 # 5-minute replay attack window
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "stripe-payments",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/stripe",
+    "destination_url": "http://app-backend:8000/webhooks/stripe",
+    "signature_provider": "stripe",
+    "signature_secret": "whsec_your_stripe_webhook_secret"
+  }'
 ```
 
 ### How Simple Relay Verifies Stripe
 1. Extracts `t` (timestamp) and `v1` (signature) from `Stripe-Signature`.
-2. Validates that `|current_time - t| <= tolerance_seconds` to defeat replay attacks.
+2. Validates that `|current_time - t| <= tolerance_seconds` (default 300s) to defeat replay attacks.
 3. Computes `HMAC-SHA256(secret, t + "." + raw_body)`.
 4. Executes constant-time equality check (`subtle.ConstantTimeCompare`) against `v1`.
 5. If invalid, rejects with `401 Unauthorized` without touching your database or internal application.
@@ -43,14 +46,20 @@ GitHub transmits webhook signatures via the `X-Hub-Signature-256` header formatt
 
 ### Route Configuration
 
-```yaml
-routes:
-  - name: "github-events"
-    path: "/api/v1/webhook/github"
-    destination: "http://app-backend:8000/webhooks/github"
-    signature:
-      provider: "github"
-      secret_env: "GITHUB_WEBHOOK_SECRET"
+Register the GitHub inbound route via `POST /api/v1/routes`:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "github-events",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/github",
+    "destination_url": "http://app-backend:8000/webhooks/github",
+    "signature_provider": "github",
+    "signature_secret": "your_github_webhook_secret"
+  }'
 ```
 
 ### Verification Logic
@@ -60,17 +69,20 @@ Simple Relay calculates `HMAC-SHA256(secret, raw_body)` and matches it using con
 
 ## 3. Generic HMAC-SHA256 Webhooks
 
-For custom webhooks (e.g., Shopify, internal microservices):
+For custom webhooks (e.g., Shopify, internal microservices), register a route using `hmac_sha256`:
 
-```yaml
-routes:
-  - name: "custom-events"
-    path: "/api/v1/webhook/custom"
-    destination: "http://app-backend:8000/webhooks/custom"
-    signature:
-      provider: "generic-hmac-sha256"
-      header: "X-Signature-SHA256"
-      secret_env: "CUSTOM_WEBHOOK_SECRET"
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "custom-events",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/custom",
+    "destination_url": "http://app-backend:8000/webhooks/custom",
+    "signature_provider": "hmac_sha256",
+    "signature_secret": "your_custom_secret"
+  }'
 ```
 
 ---

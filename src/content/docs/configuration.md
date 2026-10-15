@@ -1,13 +1,11 @@
 ---
 title: "Configuration Reference"
-description: "Complete list of CLI flags, environment variables, and configuration file directives for Simple Relay."
+description: "Complete list of CLI flags and environment variables for Simple Relay."
 section: "Reference"
 order: 9
 ---
 
-Simple Relay adheres to the 12-factor application methodology. Configuration options can be supplied via command-line flags, environment variables, or a YAML configuration file.
-
-Environment variables take precedence over configuration files, and command-line flags take precedence over environment variables.
+Simple Relay adheres to the 12-factor application methodology. Configuration options are supplied via command-line flags and environment variables. Command-line flags take precedence over environment variables, which override default values.
 
 ---
 
@@ -15,45 +13,42 @@ Environment variables take precedence over configuration files, and command-line
 
 | CLI Flag | Environment Variable | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `--listen` | `RELAY_LISTEN_ADDR` | `:8080` | TCP host and port to bind the HTTP server. |
-| `--db-path` | `RELAY_DB_PATH` | `./relay.db` | Path to persistent storage database file. |
-| `--workers` | `RELAY_WORKERS` | `4` | Number of concurrent background delivery workers. |
-| `--max-retries` | `RELAY_MAX_RETRIES` | `5` | Default maximum retry attempts before transitioning to DLQ. |
-| `--initial-interval`| `RELAY_INITIAL_INTERVAL_MS`| `1000` | Initial backoff delay in milliseconds. |
-| `--max-interval` | `RELAY_MAX_INTERVAL_MS` | `60000` | Maximum backoff cap in milliseconds. |
-| `--log-level` | `RELAY_LOG_LEVEL` | `info` | Logging verbosity: `debug`, `info`, `warn`, `error`. |
-| `--config` | `RELAY_CONFIG_FILE` | `""` | Path to optional YAML configuration file. |
+| `-host` | `RELAY_HOST` | `0.0.0.0` | Server host address. |
+| `-port` | `RELAY_PORT` (or `PORT`) | `8080` | Server HTTP port. |
+| `-db` | `RELAY_DB_PATH` | `relay.db` | Path to persistent SQLite database file. |
+| `-log-level` | `RELAY_LOG_LEVEL` | `info` | Logging verbosity: `debug`, `info`, `warn`, `error`. |
+| `-workers` | `RELAY_WORKER_CONCURRENCY` | `20` | Outbound worker pool concurrency. |
+| `-dispatcher-buffer` | `RELAY_DISPATCHER_BUFFER` | `0` (dynamic: `2 * workers`) | Dispatcher jobs channel buffer capacity. |
+| `-dispatcher-poll-ms` | `RELAY_DISPATCHER_POLL_MS` | `500` | Dispatcher polling interval in milliseconds. |
+| `-cleaner-interval` | `RELAY_CLEANER_INTERVAL` | `1h` | Storage retention cleaner execution interval. |
+| `-drain-timeout` | `RELAY_DRAIN_TIMEOUT` | `30s` | Graceful shutdown drain timeout. |
+| — | `RELAY_RETENTION_SUCCESS_DAYS` | `7` | Retention period in days for successfully delivered records. |
+| — | `RELAY_RETENTION_FAILED_DAYS` | `30` | Retention period in days for failed/dead-lettered records. |
+| — | `RELAY_ADMIN_PASSWORD` | `""` | Optional admin authentication secret for API endpoints. |
+| — | `RELAY_BATCH_SIZE` | `50` | Maximum requests grouped per SQLite WAL write transaction. |
+| — | `RELAY_BATCH_TIMEOUT_MS` | `10` | Maximum batch linger duration before flushing to SQLite. |
 
 ---
 
-## Configuration File Structure (`relay.yaml`)
+## Dynamic Route Configuration
 
-```yaml
-server:
-  listen: ":8080"
-  db_path: "/data/relay.db"
-  log_level: "info"
+Routes in Simple Relay are managed dynamically at runtime via the REST API (`/api/v1/routes`) or the embedded Web UI, avoiding static configuration files and service restarts. Routes are persisted in SQLite and hot-reloaded into memory.
 
-workers:
-  pool_size: 8
-  batch_flush_interval_ms: 50
+### Route Creation Example (`POST /api/v1/routes`)
 
-routes:
-  - name: "stripe-inbound"
-    path: "/api/v1/webhook/stripe"
-    destination: "http://internal-backend:8000/webhooks/stripe"
-    signature:
-      provider: "stripe"
-      secret_env: "STRIPE_WEBHOOK_SECRET"
-      tolerance_seconds: 300
-    retries:
-      max_attempts: 10
-      initial_interval_ms: 1000
-      max_interval_ms: 60000
-
-proxy:
-  retry_on_status: [429, 500, 502, 503, 504]
-  timeout_ms: 15000
-  total_timeout_ms: 60000
-  respect_retry_after: true
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "stripe-inbound",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/stripe",
+    "destination_url": "http://internal-backend:8000/webhooks/stripe",
+    "signature_provider": "stripe",
+    "signature_secret": "whsec_...",
+    "max_attempts": 10,
+    "timeout_ms": 15000,
+    "retry_backoff_strategy": "exp"
+  }'
 ```

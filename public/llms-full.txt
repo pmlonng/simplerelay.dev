@@ -249,21 +249,23 @@ Simple Relay treats all inbound request bodies as immutable raw byte sequences (
 
 ## 3. Configuring Inbound Routes
 
-Inbound routes can be defined via configuration flags, environment variables, or configuration files:
+Inbound routes are registered dynamically via the REST API (`POST /api/v1/routes`) or configured in the embedded Web UI:
 
-```yaml
-routes:
-  - name: "stripe-inbound"
-    path: "/api/v1/webhook/stripe"
-    destination: "http://localhost:3000/api/webhooks/stripe"
-    signature:
-      provider: "stripe"
-      secret_env: "STRIPE_WEBHOOK_SECRET"
-      tolerance_seconds: 300
-    retries:
-      max_attempts: 10
-      initial_interval_ms: 1000
-      max_interval_ms: 60000
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "stripe-inbound",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/stripe",
+    "destination_url": "http://localhost:3000/api/webhooks/stripe",
+    "signature_provider": "stripe",
+    "signature_secret": "whsec_...",
+    "max_attempts": 10,
+    "timeout_ms": 10000,
+    "retry_backoff_strategy": "exp"
+  }'
 ```
 
 When webhooks arrive, Simple Relay verifies the `Stripe-Signature` header, writes to disk, answers Stripe with `200 OK`, and forwards the verified payload to `http://localhost:3000/api/webhooks/stripe`.
@@ -536,22 +538,25 @@ Stripe secures webhooks using HMAC-SHA256 signatures passed in the `Stripe-Signa
 
 ### Route Configuration
 
-In your route configuration file (`relay.yaml`) or environment:
+Register the Stripe inbound route via `POST /api/v1/routes`:
 
-```yaml
-routes:
-  - name: "stripe-payments"
-    path: "/api/v1/webhook/stripe"
-    destination: "http://app-backend:8000/webhooks/stripe"
-    signature:
-      provider: "stripe"
-      secret_env: "STRIPE_WEBHOOK_SECRET"
-      tolerance_seconds: 300 # 5-minute replay attack window
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "stripe-payments",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/stripe",
+    "destination_url": "http://app-backend:8000/webhooks/stripe",
+    "signature_provider": "stripe",
+    "signature_secret": "whsec_your_stripe_webhook_secret"
+  }'
 ```
 
 ### How Simple Relay Verifies Stripe
 1. Extracts `t` (timestamp) and `v1` (signature) from `Stripe-Signature`.
-2. Validates that `|current_time - t| <= tolerance_seconds` to defeat replay attacks.
+2. Validates that `|current_time - t| <= tolerance_seconds` (default 300s) to defeat replay attacks.
 3. Computes `HMAC-SHA256(secret, t + "." + raw_body)`.
 4. Executes constant-time equality check (`subtle.ConstantTimeCompare`) against `v1`.
 5. If invalid, rejects with `401 Unauthorized` without touching your database or internal application.
@@ -564,14 +569,20 @@ GitHub transmits webhook signatures via the `X-Hub-Signature-256` header formatt
 
 ### Route Configuration
 
-```yaml
-routes:
-  - name: "github-events"
-    path: "/api/v1/webhook/github"
-    destination: "http://app-backend:8000/webhooks/github"
-    signature:
-      provider: "github"
-      secret_env: "GITHUB_WEBHOOK_SECRET"
+Register the GitHub inbound route via `POST /api/v1/routes`:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "github-events",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/github",
+    "destination_url": "http://app-backend:8000/webhooks/github",
+    "signature_provider": "github",
+    "signature_secret": "your_github_webhook_secret"
+  }'
 ```
 
 ### Verification Logic
@@ -581,17 +592,20 @@ Simple Relay calculates `HMAC-SHA256(secret, raw_body)` and matches it using con
 
 ## 3. Generic HMAC-SHA256 Webhooks
 
-For custom webhooks (e.g., Shopify, internal microservices):
+For custom webhooks (e.g., Shopify, internal microservices), register a route using `hmac_sha256`:
 
-```yaml
-routes:
-  - name: "custom-events"
-    path: "/api/v1/webhook/custom"
-    destination: "http://app-backend:8000/webhooks/custom"
-    signature:
-      provider: "generic-hmac-sha256"
-      header: "X-Signature-SHA256"
-      secret_env: "CUSTOM_WEBHOOK_SECRET"
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "custom-events",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/custom",
+    "destination_url": "http://app-backend:8000/webhooks/custom",
+    "signature_provider": "hmac_sha256",
+    "signature_secret": "your_custom_secret"
+  }'
 ```
 
 ---
@@ -640,15 +654,23 @@ When routing outbound traffic through `/api/v1/proxy/sync` or `/api/v1/proxy/asy
 
 ---
 
-## Configuration Example
+## Route Configuration Example
 
-```yaml
-proxy:
-  retry_on_status: [429, 500, 502, 503, 504]
-  max_attempts: 8
-  initial_interval_ms: 1000
-  max_interval_ms: 60000
-  respect_retry_after: true
+When registering a route with sync retry proxying via `POST /api/v1/routes`:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "openai-proxy",
+    "type": "outbound",
+    "mode": "sync",
+    "path": "/api/v1/relay/openai",
+    "destination_url": "https://api.openai.com/v1/chat/completions",
+    "max_attempts": 8,
+    "timeout_ms": 60000,
+    "retry_backoff_strategy": "exp"
+  }'
 ```
 
 ---
@@ -789,9 +811,7 @@ If the host suffers catastrophic hardware failure, your entire database state ca
 ## Configuration Reference
 Source: https://simplerelay.dev/docs/configuration
 
-Simple Relay adheres to the 12-factor application methodology. Configuration options can be supplied via command-line flags, environment variables, or a YAML configuration file.
-
-Environment variables take precedence over configuration files, and command-line flags take precedence over environment variables.
+Simple Relay adheres to the 12-factor application methodology. Configuration options are supplied via command-line flags and environment variables. Command-line flags take precedence over environment variables, which override default values.
 
 ---
 
@@ -799,47 +819,44 @@ Environment variables take precedence over configuration files, and command-line
 
 | CLI Flag | Environment Variable | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `--listen` | `RELAY_LISTEN_ADDR` | `:8080` | TCP host and port to bind the HTTP server. |
-| `--db-path` | `RELAY_DB_PATH` | `./relay.db` | Path to persistent storage database file. |
-| `--workers` | `RELAY_WORKERS` | `4` | Number of concurrent background delivery workers. |
-| `--max-retries` | `RELAY_MAX_RETRIES` | `5` | Default maximum retry attempts before transitioning to DLQ. |
-| `--initial-interval`| `RELAY_INITIAL_INTERVAL_MS`| `1000` | Initial backoff delay in milliseconds. |
-| `--max-interval` | `RELAY_MAX_INTERVAL_MS` | `60000` | Maximum backoff cap in milliseconds. |
-| `--log-level` | `RELAY_LOG_LEVEL` | `info` | Logging verbosity: `debug`, `info`, `warn`, `error`. |
-| `--config` | `RELAY_CONFIG_FILE` | `""` | Path to optional YAML configuration file. |
+| `-host` | `RELAY_HOST` | `0.0.0.0` | Server host address. |
+| `-port` | `RELAY_PORT` (or `PORT`) | `8080` | Server HTTP port. |
+| `-db` | `RELAY_DB_PATH` | `relay.db` | Path to persistent SQLite database file. |
+| `-log-level` | `RELAY_LOG_LEVEL` | `info` | Logging verbosity: `debug`, `info`, `warn`, `error`. |
+| `-workers` | `RELAY_WORKER_CONCURRENCY` | `20` | Outbound worker pool concurrency. |
+| `-dispatcher-buffer` | `RELAY_DISPATCHER_BUFFER` | `0` (dynamic: `2 * workers`) | Dispatcher jobs channel buffer capacity. |
+| `-dispatcher-poll-ms` | `RELAY_DISPATCHER_POLL_MS` | `500` | Dispatcher polling interval in milliseconds. |
+| `-cleaner-interval` | `RELAY_CLEANER_INTERVAL` | `1h` | Storage retention cleaner execution interval. |
+| `-drain-timeout` | `RELAY_DRAIN_TIMEOUT` | `30s` | Graceful shutdown drain timeout. |
+| — | `RELAY_RETENTION_SUCCESS_DAYS` | `7` | Retention period in days for successfully delivered records. |
+| — | `RELAY_RETENTION_FAILED_DAYS` | `30` | Retention period in days for failed/dead-lettered records. |
+| — | `RELAY_ADMIN_PASSWORD` | `""` | Optional admin authentication secret for API endpoints. |
+| — | `RELAY_BATCH_SIZE` | `50` | Maximum requests grouped per SQLite WAL write transaction. |
+| — | `RELAY_BATCH_TIMEOUT_MS` | `10` | Maximum batch linger duration before flushing to SQLite. |
 
 ---
 
-## Configuration File Structure (`relay.yaml`)
+## Dynamic Route Configuration
 
-```yaml
-server:
-  listen: ":8080"
-  db_path: "/data/relay.db"
-  log_level: "info"
+Routes in Simple Relay are managed dynamically at runtime via the REST API (`/api/v1/routes`) or the embedded Web UI, avoiding static configuration files and service restarts. Routes are persisted in SQLite and hot-reloaded into memory.
 
-workers:
-  pool_size: 8
-  batch_flush_interval_ms: 50
+### Route Creation Example (`POST /api/v1/routes`)
 
-routes:
-  - name: "stripe-inbound"
-    path: "/api/v1/webhook/stripe"
-    destination: "http://internal-backend:8000/webhooks/stripe"
-    signature:
-      provider: "stripe"
-      secret_env: "STRIPE_WEBHOOK_SECRET"
-      tolerance_seconds: 300
-    retries:
-      max_attempts: 10
-      initial_interval_ms: 1000
-      max_interval_ms: 60000
-
-proxy:
-  retry_on_status: [429, 500, 502, 503, 504]
-  timeout_ms: 15000
-  total_timeout_ms: 60000
-  respect_retry_after: true
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "stripe-inbound",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/stripe",
+    "destination_url": "http://internal-backend:8000/webhooks/stripe",
+    "signature_provider": "stripe",
+    "signature_secret": "whsec_...",
+    "max_attempts": 10,
+    "timeout_ms": 15000,
+    "retry_backoff_strategy": "exp"
+  }'
 ```
 
 ----------------------------------------

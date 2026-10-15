@@ -29,15 +29,23 @@ When routing outbound traffic through `/api/v1/proxy/sync` or `/api/v1/proxy/asy
 
 ---
 
-## Configuration Example
+## Route Configuration Example
 
-```yaml
-proxy:
-  retry_on_status: [429, 500, 502, 503, 504]
-  max_attempts: 8
-  initial_interval_ms: 1000
-  max_interval_ms: 60000
-  respect_retry_after: true
+When registering a route with sync retry proxying via `POST /api/v1/routes`:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "openai-proxy",
+    "type": "outbound",
+    "mode": "sync",
+    "path": "/api/v1/relay/openai",
+    "destination_url": "https://api.openai.com/v1/chat/completions",
+    "max_attempts": 8,
+    "timeout_ms": 60000,
+    "retry_backoff_strategy": "exp"
+  }'
 ```
 
 ---

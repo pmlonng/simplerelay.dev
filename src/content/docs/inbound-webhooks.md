@@ -56,21 +56,23 @@ Simple Relay treats all inbound request bodies as immutable raw byte sequences (
 
 ## 3. Configuring Inbound Routes
 
-Inbound routes can be defined via configuration flags, environment variables, or configuration files:
+Inbound routes are registered dynamically via the REST API (`POST /api/v1/routes`) or configured in the embedded Web UI:
 
-```yaml
-routes:
-  - name: "stripe-inbound"
-    path: "/api/v1/webhook/stripe"
-    destination: "http://localhost:3000/api/webhooks/stripe"
-    signature:
-      provider: "stripe"
-      secret_env: "STRIPE_WEBHOOK_SECRET"
-      tolerance_seconds: 300
-    retries:
-      max_attempts: 10
-      initial_interval_ms: 1000
-      max_interval_ms: 60000
+```bash
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "stripe-inbound",
+    "type": "inbound",
+    "mode": "async",
+    "path": "/api/v1/webhook/stripe",
+    "destination_url": "http://localhost:3000/api/webhooks/stripe",
+    "signature_provider": "stripe",
+    "signature_secret": "whsec_...",
+    "max_attempts": 10,
+    "timeout_ms": 10000,
+    "retry_backoff_strategy": "exp"
+  }'
 ```
 
 When webhooks arrive, Simple Relay verifies the `Stripe-Signature` header, writes to disk, answers Stripe with `200 OK`, and forwards the verified payload to `http://localhost:3000/api/webhooks/stripe`.
