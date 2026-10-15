@@ -361,16 +361,20 @@ const socialProofLogos = [
         </div>
       </div>
 
-      <!-- Video demo placeholder -->
-      <div class="mt-12 max-w-[680px] mx-auto rounded-[18px] border border-white/10 bg-[#2a2a2c] overflow-hidden aspect-video flex items-center justify-center">
-        <div class="text-center">
-          <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4 hover:bg-white/20 transition-colors cursor-pointer">
-            <i data-lucide="play" class="w-6 h-6 text-white ml-0.5 fill-current"></i>
-          </div>
-          <p class="text-[#6e6e73] text-[14px]">Demo: Server down → SQLite persist → Auto retry → Delivered</p>
-          <p class="text-[#4a4a4a] text-[12px] mt-1"><!-- VIDEO_DEMO_PLACEHOLDER --></p>
-        </div>
+      <!-- Simple Relay explainer video -->
+      <div class="mt-12 max-w-[880px] mx-auto rounded-[18px] border border-white/10 bg-black overflow-hidden aspect-video">
+        <iframe
+          class="w-full h-full"
+          src="https://www.youtube.com/embed/xzBEIMNnEII?controls=1&rel=0"
+          title="Simple Relay explainer: reliable HTTP delivery"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
       </div>
+      <p class="mt-5 text-center text-[14px] text-[#cccccc]">
+        Ready to try it? <a href="/docs/quickstart" class="text-[#2997ff] hover:underline font-medium">Get started in about 2 minutes</a>
+      </p>
     </div>
   </section>
 
