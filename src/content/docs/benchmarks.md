@@ -2,7 +2,7 @@
 title: "Benchmarks & Performance"
 description: "Sustained ingestion throughput, latency percentiles, and memory footprint measured under realistic loads."
 section: "Reference"
-order: 12
+order: 13
 ---
 
 Simple Relay is engineered in pure Go to deliver maximum reliability with a near-zero memory footprint.

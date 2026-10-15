@@ -17,6 +17,7 @@ Simple Relay is a lightweight, self-hosted reliability layer for HTTP traffic. I
 - [Configuration Reference](https://simplerelay.dev/docs/configuration): CLI flags, environment variables matrix, YAML configuration file specs.
 - [REST API Reference](https://simplerelay.dev/docs/api-reference): Webhook ingest, proxy endpoints, DLQ inspection, replay API, health check.
 - [Embedded Web UI](https://simplerelay.dev/docs/embedded-ui): Real-time delivery logs, payload inspection, attempt history, DLQ replay.
+- [CLI Reference](https://simplerelay.dev/docs/cli-reference): Standalone relay-cli inspection binary, health probes, queue depth monitoring, and headless DLQ replay.
 - [Benchmarks & Performance](https://simplerelay.dev/docs/benchmarks): Measured throughput (10,000 req/s), latency percentiles, and memory footprint (26 MB).
 
 ## Full Context for LLMs

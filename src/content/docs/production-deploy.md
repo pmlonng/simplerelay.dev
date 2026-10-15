@@ -31,11 +31,15 @@ services:
     volumes:
       - ./data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      # Use relay-cli for zero-dependency health checks (no curl required)
+      test: ["CMD", "/usr/local/bin/relay-cli", "health"]
       interval: 10s
       timeout: 3s
       retries: 3
 ```
+
+> [!TIP] Zero-Dependency Probes
+> In minimal container environments where `curl` or `wget` are absent, bundle `relay-cli` to perform health checks and queue depth monitoring. See the **[CLI Reference](/docs/cli-reference)** for Docker and Kubernetes probe configurations.
 
 Start the service:
 
