@@ -12,6 +12,7 @@ export const GET: APIRoute = async ({ site }) => {
     '/alternatives/svix/',
     '/alternatives/convoy/',
     '/alternatives/temporal/',
+    '/privacy',
   ];
 
   const urls = paths.map((path) => `  <url><loc>${new URL(path, origin).href}</loc></url>`).join('\n');
