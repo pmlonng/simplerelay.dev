@@ -36,15 +36,14 @@ const DOCS_URL = "/docs";
           <h3 id="footer-guides" class="text-ink text-[14px] font-semibold tracking-[-0.014em] mb-4">Guides</h3>
           <ul class="space-y-2.5" role="list">
             {[
-              { label: "How to retry Stripe Webhooks", href: "#stripe-webhook-guide" },
-              { label: "Shopify webhook delivery guarantee", href: "#shopify-webhook-guide" },
-              { label: "GitHub webhook reliability", href: "#github-webhook-guide" },
-              { label: "Self-hosting with Docker", href: "#docker-guide" },
+              { label: "How to retry Stripe Webhooks", href: "/docs/retries-and-dlq/" },
+              { label: "Shopify webhook delivery guarantee", href: "/docs/inbound-webhooks/" },
+              { label: "GitHub webhook reliability", href: "/docs/stripe-github/" },
+              { label: "Self-hosting with Docker", href: "/docs/production-deploy/" },
             ].map((link) => (
               <li>
                 <a
                   href={link.href}
-                  id={link.href.replace("#", "")}
                   class="text-[#6e6e73] text-[14px] leading-[2] hover:text-primary transition-colors"
                 >
                   {link.label}
