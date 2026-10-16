@@ -51,6 +51,16 @@ const jsonLd = {
   <title>{title}</title>
   <meta name="description" content={description} />
 
+  <!-- Google tag (gtag.js) -->
+  <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-JXWY393XNY"></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-JXWY393XNY');
+  </script>
+
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content={resolvedCanonicalUrl} />
