@@ -163,7 +163,7 @@ const socialProofLogos = [
             <span class="text-[#0066cc] select-none">$</span>
             <div class="text-white select-all">
               <span>git clone https://github.com/simple-relay/simple-relay.git &amp;&amp; cd simple-relay</span><br/>
-              <span>CGO_ENABLED=0 go build -o relay ./cmd/relay &amp;&amp; CGO_ENABLED=0 go build -o relay-cli ./cmd/relay-cli &amp;&amp; ./relay</span>
+              <span>CGO_ENABLED=0 go build -o relay ./cmd/relay &amp;&amp; ./relay</span>
             </div>
           </div>
           <div class="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] text-[#6e6e73]">
@@ -180,7 +180,7 @@ const socialProofLogos = [
         let currentTab = 'docker';
         const commands = {
           docker: "docker run -d -p 8080:8080 -v relay-data:/data simple-relay/simple-relay:latest",
-          binary: "git clone https://github.com/simple-relay/simple-relay.git && cd simple-relay && CGO_ENABLED=0 go build -o relay ./cmd/relay && CGO_ENABLED=0 go build -o relay-cli ./cmd/relay-cli && ./relay"
+          binary: "git clone https://github.com/simple-relay/simple-relay.git && cd simple-relay && CGO_ENABLED=0 go build -o relay ./cmd/relay && ./relay"
         };
 
         function switchQuickstart(tab) {
@@ -340,24 +340,7 @@ const socialProofLogos = [
             )}
           </div>
 
-          <!-- Animated retry demo -->
-          <div class="mt-6 p-3 rounded-[8px] bg-[#1d1d1f]/80 border border-white/5">
-            <p class="text-[#6e6e73] text-[11px] mb-2 uppercase tracking-wider font-semibold">What happens when destination is down:</p>
-            <div class="space-y-1.5">
-              <div class="flex items-center gap-2 text-[12px] font-mono">
-                <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse-dot shrink-0" style="animation-delay: 0s" aria-hidden="true"></span>
-                <span class="text-[#a1a1a6]">Payload persisted to durable storage</span>
-              </div>
-              <div class="flex items-center gap-2 text-[12px] font-mono">
-                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse-dot shrink-0" style="animation-delay: 0.6s" aria-hidden="true"></span>
-                <span class="text-[#a1a1a6]">Retry with exponential backoff + jitter</span>
-              </div>
-              <div class="flex items-center gap-2 text-[12px] font-mono">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot shrink-0" style="animation-delay: 1.2s" aria-hidden="true"></span>
-                <span class="text-[#a1a1a6] inline-flex items-center gap-1">Delivered <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> — or moved to DLQ for replay</span>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
 
@@ -428,7 +411,7 @@ const socialProofLogos = [
             Dead Letter Queue
           </h3>
           <p class="text-[#6e6e73] text-[17px] leading-[1.47] tracking-[-0.022em]">
-            Bounded retries — never retry forever. Failed requests move to DLQ automatically. Replay individual or bulk deliveries anytime via Web UI, REST API, or <code class="text-[14px] bg-hairline px-1.5 py-0.5 rounded-[4px] font-mono text-ink">relay-cli</code>.
+            Bounded retries — never retry forever. Failed requests move to DLQ automatically. Replay individual or bulk deliveries anytime via Web UI, REST API, or <code class="text-[14px] bg-hairline px-1.5 py-0.5 rounded-[4px] font-mono text-ink">relay dlq</code>.
           </p>
         </article>
 
@@ -551,7 +534,7 @@ const socialProofLogos = [
           <span class="text-primary-dark">Password-protected admin session &amp; CSRF safe</span>
         </div>
         <div class="mt-2.5 pt-2.5 border-t border-white/5 flex items-center justify-center text-[12px] text-[#a1a1a6]">
-          <span>Prefer headless automation? Script health checks and DLQ replays with <a href="/docs/cli-reference" class="text-[#2997ff] hover:underline font-mono">relay-cli</a>.</span>
+          <span>Prefer headless automation? Script health checks and DLQ replays with <a href="/docs/cli-reference" class="text-[#2997ff] hover:underline font-mono">relay CLI</a>.</span>
         </div>
       </div>
     </div>

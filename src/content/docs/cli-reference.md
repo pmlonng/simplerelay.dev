@@ -1,38 +1,38 @@
 ---
-title: "CLI Reference (relay-cli)"
-description: "Command-line inspection tool for daemon health checks, queue depth monitoring, and automated DLQ replay."
+title: "CLI Reference"
+description: "Embedded operator CLI subcommands for daemon health checks, queue depth monitoring, and automated DLQ replay."
 section: "Reference"
 order: 12
 ---
 
-`relay-cli` is a lightweight, zero-dependency operator companion binary for Simple Relay.
+Operator inspection tooling is embedded directly into the primary `relay` binary. Running `relay` without subcommands (or `relay serve`) launches the reliability daemon; running subcommands (`health`, `status`, `queue`, `dlq`) executes operator inspection and triage tasks from the terminal without browser access.
 
-Rather than opening or locking the SQLite database directly, `relay-cli` interacts exclusively with Simple Relay's REST API over HTTP/HTTPS. This architecture prevents SQLite lock contention (`SQLITE_BUSY`), eliminates shared memory overhead, and allows operators to inspect or manage remote daemons across networks or from lightweight container environments.
+Rather than opening or locking the SQLite database directly, CLI subcommands interact exclusively with Simple Relay's REST API over HTTP/HTTPS. This architecture prevents SQLite lock contention (`SQLITE_BUSY`), eliminates shared memory overhead, and allows operators to inspect or manage remote daemons across networks or from lightweight container environments.
 
 ---
 
 ## 1. Installation & Build
 
-`relay-cli` is compiled as a static binary with CGO disabled:
+Simple Relay is distributed as a single static binary with CGO disabled:
 
 ### Compile from Source
 
 ```bash
-# Build standalone CLI binary
-CGO_ENABLED=0 go build -o relay-cli ./cmd/relay-cli
+# Build the unified static binary
+CGO_ENABLED=0 go build -o relay ./cmd/relay
 ```
 
 ### Install via Go Toolchain
 
 ```bash
-go install github.com/simple-relay/simple-relay/cmd/relay-cli@latest
+go install github.com/simple-relay/simple-relay/cmd/relay@latest
 ```
 
 ---
 
 ## 2. Global Flags & Environment Variables
 
-All `relay-cli` subcommands accept global flags and support configuration through environment variables:
+All `relay` CLI subcommands accept global flags and support configuration through environment variables:
 
 | CLI Flag | Environment Variable | Default | Description |
 | :--- | :--- | :--- | :--- |
@@ -50,9 +50,9 @@ All `relay-cli` subcommands accept global flags and support configuration throug
 Probes the `/healthz` endpoint, measures end-to-end round-trip network latency, and returns standardized POSIX exit codes suitable for orchestration probes:
 
 ```bash
-relay-cli health
+relay health
 # Or alias
-relay-cli status
+relay status
 ```
 
 #### Example Output (Table):
@@ -63,7 +63,7 @@ OK       0.45ms    2026-10-15T01:25:00.000000Z   http://127.0.0.1:8080
 
 #### Example Output (JSON):
 ```bash
-relay-cli health -o json
+relay health -o json
 ```
 ```json
 {
@@ -89,7 +89,7 @@ relay-cli health -o json
 Inspects the number of pending and active in-flight delivery jobs across background dispatcher workers:
 
 ```bash
-relay-cli queue
+relay queue
 ```
 
 #### Example Output (Table):
@@ -100,7 +100,7 @@ QUEUE DEPTH   PENDING   IN-FLIGHT   STATUS
 
 #### Example Output (JSON):
 ```bash
-relay-cli queue -o json
+relay queue -o json
 ```
 ```json
 {
@@ -112,7 +112,7 @@ relay-cli queue -o json
 ```
 
 > [!NOTE] Backlog Alerting
-> If total queue depth (`pending + in_flight`) reaches or exceeds **1,000 requests**, `relay-cli queue` marks status as `BACKLOG` and exits with **code 2**. This enables automated autoscaling or alert triggering in monitoring pipelines without custom parsing scripts.
+> If total queue depth (`pending + in_flight`) reaches or exceeds **1,000 requests**, `relay queue` marks status as `BACKLOG` and exits with **code 2**. This enables automated autoscaling or alert triggering in monitoring pipelines without custom parsing scripts.
 
 ---
 
@@ -123,8 +123,8 @@ Inspect and triage dead-lettered requests that have exhausted all configured ret
 #### List DLQ Records
 
 ```bash
-relay-cli dlq list
-relay-cli dlq list --limit 100
+relay dlq list
+relay dlq list --limit 100
 ```
 
 Example Output:
@@ -137,7 +137,7 @@ REQUEST ID                    ROUTE           ATTEMPTS   FAILED AT             L
 #### Inspect Detailed Record & Attempt Audit Trail
 
 ```bash
-relay-cli dlq inspect 01j9x0m1p00000000000000001
+relay dlq inspect 01j9x0m1p00000000000000001
 ```
 
 Example Output:
@@ -168,7 +168,7 @@ Attempt History:
 Requeues a specific dead-lettered request for immediate retry:
 
 ```bash
-relay-cli dlq replay 01j9x0m1p00000000000000001
+relay dlq replay 01j9x0m1p00000000000000001
 ```
 
 ```
@@ -177,10 +177,10 @@ Successfully requeued request 01j9x0m1p00000000000000001 for delivery.
 
 #### Replay All Failed Requests (Bulk Replay)
 
-Requeues all messages currently in the DLQ. When run in an interactive terminal, `relay-cli` prompts for confirmation:
+Requeues all messages currently in the DLQ. When run in an interactive terminal, `relay` prompts for confirmation:
 
 ```bash
-relay-cli dlq replay-all
+relay dlq replay-all
 # Found 42 items in DLQ. Requeue all for delivery? [y/N]: y
 # Successfully requeued 42 DLQ requests for delivery.
 ```
@@ -188,14 +188,14 @@ relay-cli dlq replay-all
 In CI/CD, cron jobs, or headless deployment scripts, pass `--yes` (`-y`) to bypass confirmation:
 
 ```bash
-relay-cli dlq replay-all -y
+relay dlq replay-all -y
 ```
 
 ---
 
 ## 4. Headless & Container Probe Recipes
 
-Because `relay-cli` is compiled as a static, CGO-free binary, you can bundle it into minimal Docker images (like `scratch` or `alpine`) without adding `curl`, `wget`, or `jq`.
+Because Simple Relay compiles into a single, static CGO-free binary, container images only need the `relay` binary for both serving traffic and executing health/readiness probes (no `curl`, `wget`, or `jq` needed).
 
 ### Docker Container Health Check
 
@@ -203,7 +203,7 @@ Add to your `Dockerfile`:
 
 ```dockerfile
 HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
-  CMD ["/usr/local/bin/relay-cli", "health"]
+  CMD ["/usr/local/bin/relay", "health"]
 ```
 
 ### Kubernetes Probes
@@ -218,7 +218,7 @@ spec:
       livenessProbe:
         exec:
           command:
-            - /usr/local/bin/relay-cli
+            - /usr/local/bin/relay
             - health
         initialDelaySeconds: 3
         periodSeconds: 10
@@ -227,7 +227,7 @@ spec:
       readinessProbe:
         exec:
           command:
-            - /usr/local/bin/relay-cli
+            - /usr/local/bin/relay
             - queue
         initialDelaySeconds: 2
         periodSeconds: 5
@@ -236,4 +236,4 @@ spec:
 ```
 
 > [!TIP] Zero-Downtime Backlog Protection
-> The `readinessProbe` using `relay-cli queue` automatically fails (exit code 2) if queue depth exceeds 1,000 jobs, prompting Kubernetes Service routing to temporarily stop sending new inbound requests to an overloaded replica until its queue drains.
+> The `readinessProbe` using `relay queue` automatically fails (exit code 2) if queue depth exceeds 1,000 jobs, prompting Kubernetes Service routing to temporarily stop sending new inbound requests to an overloaded replica until its queue drains.

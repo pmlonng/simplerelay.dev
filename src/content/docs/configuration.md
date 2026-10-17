@@ -9,24 +9,42 @@ Simple Relay adheres to the 12-factor application methodology. Configuration opt
 
 ---
 
-## Core Settings Matrix
+## Server Daemon Settings Matrix
+
+When running Simple Relay as a background daemon (`relay` or `relay serve`), the following flags and environment variables are supported. Both standard POSIX flags (`--host`) and single-dash flags (`-host`) are accepted:
 
 | CLI Flag | Environment Variable | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `-host` | `RELAY_HOST` | `0.0.0.0` | Server host address. |
-| `-port` | `RELAY_PORT` (or `PORT`) | `8080` | Server HTTP port. |
-| `-db` | `RELAY_DB_PATH` | `relay.db` | Path to persistent SQLite database file. |
-| `-log-level` | `RELAY_LOG_LEVEL` | `info` | Logging verbosity: `debug`, `info`, `warn`, `error`. |
-| `-workers` | `RELAY_WORKER_CONCURRENCY` | `20` | Outbound worker pool concurrency. |
-| `-dispatcher-buffer` | `RELAY_DISPATCHER_BUFFER` | `0` (dynamic: `2 * workers`) | Dispatcher jobs channel buffer capacity. |
-| `-dispatcher-poll-ms` | `RELAY_DISPATCHER_POLL_MS` | `500` | Dispatcher polling interval in milliseconds. |
-| `-cleaner-interval` | `RELAY_CLEANER_INTERVAL` | `1h` | Storage retention cleaner execution interval. |
-| `-drain-timeout` | `RELAY_DRAIN_TIMEOUT` | `30s` | Graceful shutdown drain timeout. |
+| `--host`, `-host` | `RELAY_HOST` | `0.0.0.0` | Server host address. |
+| `--port`, `-port` | `RELAY_PORT` (or `PORT`) | `8080` | Server HTTP port. |
+| `--db`, `-db` | `RELAY_DB_PATH` | `relay.db` | Path to persistent SQLite database file. |
+| `--log-level`, `-log-level` | `RELAY_LOG_LEVEL` | `info` | Logging verbosity: `debug`, `info`, `warn`, `error`. |
+| `--workers`, `-workers` | `RELAY_WORKER_CONCURRENCY` | `20` | Outbound worker pool concurrency. |
+| `--dispatcher-buffer`, `-dispatcher-buffer` | `RELAY_DISPATCHER_BUFFER` | `0` (dynamic: `2 * workers`) | Dispatcher jobs channel buffer capacity. |
+| `--dispatcher-poll-ms`, `-dispatcher-poll-ms` | `RELAY_DISPATCHER_POLL_MS` | `500` | Dispatcher polling interval in milliseconds. |
+| `--cleaner-interval`, `-cleaner-interval` | `RELAY_CLEANER_INTERVAL` | `1h` | Storage retention cleaner execution interval. |
+| `--drain-timeout`, `-drain-timeout` | `RELAY_DRAIN_TIMEOUT` | `30s` | Graceful shutdown drain timeout. |
 | — | `RELAY_RETENTION_SUCCESS_DAYS` | `7` | Retention period in days for successfully delivered records. |
 | — | `RELAY_RETENTION_FAILED_DAYS` | `30` | Retention period in days for failed/dead-lettered records. |
 | — | `RELAY_ADMIN_PASSWORD` | `""` | Optional admin authentication secret for API endpoints. |
 | — | `RELAY_BATCH_SIZE` | `50` | Maximum requests grouped per SQLite WAL write transaction. |
 | — | `RELAY_BATCH_TIMEOUT_MS` | `10` | Maximum batch linger duration before flushing to SQLite. |
+
+---
+
+## CLI Subcommands Settings Matrix
+
+When executing operator subcommands (`relay health`, `relay queue`, `relay dlq`), the following global persistent flags and environment variables configure remote daemon connectivity and output formatting:
+
+| CLI Flag | Environment Variable | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `-s, --server` | `RELAY_SERVER_URL` | `http://127.0.0.1:8080` | Target Simple Relay daemon HTTP/HTTPS address. |
+| `-k, --api-key` | `RELAY_API_KEY` | `""` | Admin API key for protected management endpoints. |
+| `-o, --output` | `RELAY_OUTPUT` | `table` | Output format: `table` (human-readable) or `json` (scripting). |
+| `--timeout` | `RELAY_TIMEOUT` | `10s` | HTTP client request timeout duration. |
+
+> [!TIP] Detailed Subcommand Documentation
+> For subcommand recipes, interactive confirmation overrides, and orchestration probe configurations, see the **[CLI Reference](/docs/cli-reference)**.
 
 ---
 

@@ -1,6 +1,6 @@
 # simplerelay.dev
 
-Landing page and documentation for **Simple HTTP Relay**:  
+Landing page and documentation for [**Simple HTTP Relay**](https://github.com/simple-relay/simple-relay):  
 > *"One binary. No infrastructure. Reliable HTTP delivery."*
 
 Built with [Astro](https://astro.build) (SSG) & [Tailwind CSS](https://tailwindcss.com).

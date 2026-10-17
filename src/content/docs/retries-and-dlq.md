@@ -85,16 +85,16 @@ curl -X POST http://localhost:8080/api/v1/dlq/replay \
   -d '{"route": "stripe-inbound", "limit": 100}'
 ```
 
-### Replay via `relay-cli`
+### Replay via `relay` CLI
 
 For terminal workflows, scripts, or automated remediation:
 
 ```bash
 # Replay a specific dead-lettered message
-relay-cli dlq replay 01j9x0m1p00000000000000000
+relay dlq replay 01j9x0m1p00000000000000000
 
 # Bulk replay all failed DLQ messages without confirmation prompt
-relay-cli dlq replay-all -y
+relay dlq replay-all -y
 ```
 
 ---
