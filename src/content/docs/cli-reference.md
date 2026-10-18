@@ -214,7 +214,7 @@ Configure Kubernetes `livenessProbe` and `readinessProbe` directly in your Pod m
 spec:
   containers:
     - name: relay
-      image: simple-relay:latest
+      image: ghcr.io/simple-relay/simple-relay:latest
       livenessProbe:
         exec:
           command:

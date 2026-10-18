@@ -17,7 +17,8 @@ Run the container in daemon mode, mounting a local folder for persistence:
 docker run -d \
   --name simple-relay \
   -p 8080:8080 \
-  -v $(pwd)/data:/data \
+  -v relay-data:/data \
+  -e RELAY_DB_PATH=/data/relay.db \
   ghcr.io/simple-relay/simple-relay:latest
 ```
 

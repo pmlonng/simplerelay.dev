@@ -91,7 +91,8 @@ Run the container in daemon mode, mounting a local folder for persistence:
 docker run -d \
   --name simple-relay \
   -p 8080:8080 \
-  -v $(pwd)/data:/data \
+  -v relay-data:/data \
+  -e RELAY_DB_PATH=/data/relay.db \
   ghcr.io/simple-relay/simple-relay:latest
 ```
 
@@ -1606,7 +1607,7 @@ Configure Kubernetes `livenessProbe` and `readinessProbe` directly in your Pod m
 spec:
   containers:
     - name: relay
-      image: simple-relay:latest
+      image: ghcr.io/simple-relay/simple-relay:latest
       livenessProbe:
         exec:
           command:
