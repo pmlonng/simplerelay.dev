@@ -91,6 +91,7 @@ Ingests an inbound webhook, verifies cryptographic signatures (if configured on 
 ### `POST /api/v1/jobs/:route_name` *(Protected)*
 Fire-and-forget asynchronous job ingestion. Requires a valid API key, admin session cookie, or loopback connection in Dev Mode. Persists the request to SQLite WAL storage and schedules immediate delivery by background dispatcher workers.
 
+- **Credential Stripping:** Simple Relay automatically strips its own authentication credentials (`X-API-Key`, `Authorization: Bearer sr_live_*`, and `relay_session` cookie) before persisting `requests.headers` to SQLite or forwarding the job to the destination URL. Any upstream `Authorization` header (e.g., `Bearer sk_live_...`) is preserved intact.
 - **Status Codes:**
   - `202 Accepted`: Job durably queued in SQLite WAL storage.
   - `401 Unauthorized`: Missing or invalid API key / session credentials.
@@ -105,6 +106,7 @@ Fire-and-forget asynchronous job ingestion. Requires a valid API key, admin sess
 ### `ANY /api/v1/relay/:route_name` *(Protected)*
 Synchronous outbound proxy for routes configured with `mode: "sync"`. Requires a valid API key, admin session cookie, or loopback connection in Dev Mode. Transparently forwards HTTP method, headers, and request body to the configured destination URL.
 
+- **Credential Stripping:** Strips internal Simple Relay authentication headers (`X-API-Key`, `Authorization: Bearer sr_live_*`, and `relay_session` cookie) prior to SQLite audit logging and upstream forwarding, while preserving upstream `Authorization` tokens (e.g., `Bearer $OPENAI_API_KEY`).
 - **Automatic Retries:** Automatically retries transient upstream failures (`429 Too Many Requests`, `502`, `503`, `504`) with exponential backoff and randomized full jitter.
 - **Client Disconnect Cancellation:** Cancels in-flight upstream execution immediately if the calling client closes the connection (`r.Context()`), eliminating wasted compute and downstream quota consumption.
 - **Returns:** Transparent upstream status code, response headers, and body (`401 Unauthorized` if caller is unauthenticated).

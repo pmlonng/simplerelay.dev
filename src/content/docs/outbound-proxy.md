@@ -10,8 +10,8 @@ Simple Relay provides two operational modes for handling outgoing HTTP requests 
 1. **Synchronous Transparent Proxy (`/api/v1/relay/:route_name`)**
 2. **Asynchronous Background Jobs (`/api/v1/jobs/:route_name`)**
 
-> [!NOTE] Outbound Endpoint Authentication
-> Both `/api/v1/relay/:route_name` and `/api/v1/jobs/:route_name` are **protected endpoints**. Callers must authenticate with a valid API key (`X-API-Key: sr_live_...` or `Authorization: Bearer sr_live_...`), unless connecting from a local loopback socket (`127.0.0.1` / `::1`) in Dev Mode (`RELAY_ADMIN_PASSWORD=""`).
+> [!NOTE] Outbound Endpoint Authentication & Credential Stripping
+> Both `/api/v1/relay/:route_name` and `/api/v1/jobs/:route_name` are **protected endpoints**. Callers must authenticate with a valid API key (`X-API-Key: sr_live_...` or `Authorization: Bearer sr_live_...`), unless connecting from a local loopback socket (`127.0.0.1` / `::1`) in Dev Mode (`RELAY_ADMIN_PASSWORD=""`). Simple Relay automatically strips its own authentication credentials (`X-API-Key`, `Authorization: Bearer sr_live_*`, and `relay_session` cookie) before persisting request logs or forwarding headers to your upstream destination, while preserving any upstream `Authorization` header (such as `Authorization: Bearer $OPENAI_API_KEY`).
 
 ---
 
