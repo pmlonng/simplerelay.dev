@@ -24,9 +24,12 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - RELAY_LISTEN_ADDR=:8080
+      - RELAY_HOST=0.0.0.0
+      - RELAY_PORT=8080
       - RELAY_DB_PATH=/data/relay.db
-      - RELAY_WORKERS=8
+      - RELAY_WORKER_CONCURRENCY=20
+      - RELAY_ADMIN_PASSWORD=change-me-in-production
+      - RELAY_TRUST_PROXY=true
       - RELAY_LOG_LEVEL=info
     volumes:
       - ./data:/data
@@ -37,6 +40,10 @@ services:
       timeout: 3s
       retries: 3
 ```
+
+> [!IMPORTANT] Authentication & Reverse Proxy Headers
+> - Always set `RELAY_ADMIN_PASSWORD` in production (or authenticate with an `X-API-Key`). When `RELAY_ADMIN_PASSWORD` is unset, unauthenticated access is restricted strictly to loopback (`127.0.0.1` / `::1`)—meaning even local browser traffic crossing a Docker bridge network will require an API key or admin password.
+> - Enable `RELAY_TRUST_PROXY=true` (or `--trust-proxy`) **only** when Simple Relay runs behind a trusted reverse proxy (Nginx, Caddy, Traefik, Cloudflare) that overwrites `X-Forwarded-For` / `X-Real-IP`.
 
 > [!TIP] Zero-Dependency Probes
 > In minimal container environments where `curl` or `wget` are absent, use `relay health` or `relay queue` to perform health checks and queue depth monitoring. See the **[CLI Reference](/docs/cli-reference)** for Docker and Kubernetes probe configurations.

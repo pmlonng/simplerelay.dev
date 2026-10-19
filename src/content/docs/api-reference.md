@@ -16,15 +16,15 @@ Simple Relay implements a dual authentication architecture supporting both progr
 ### Operational Modes
 
 - **Dev Mode (`RELAY_ADMIN_PASSWORD=""`):**
-  When `RELAY_ADMIN_PASSWORD` is empty or unset (default), all management endpoints are open without authentication. This mode provides friction-free local development and zero-configuration testing.
+  When `RELAY_ADMIN_PASSWORD` is empty or unset (default), unauthenticated access to protected endpoints is strictly restricted to **loopback socket connections** (`127.0.0.1`, `::1`, `localhost`). Remote (non-loopback) callers must authenticate using a valid API key (`X-API-Key` or `Authorization: Bearer`). When binding to a non-loopback address (`0.0.0.0` or `::`) without an admin password, Simple Relay logs a startup warning and auto-seeds an initial API key on cold boot.
 - **Protected Mode (`RELAY_ADMIN_PASSWORD="<secret>"`):**
-  When `RELAY_ADMIN_PASSWORD` is set, all management, telemetry, and inspection endpoints require authentication. Public ingestion and health probe endpoints remain accessible.
+  When `RELAY_ADMIN_PASSWORD` is set, all management, telemetry, inspection, and outbound delivery endpoints require authentication from all callers (including loopback). Only public webhook ingestion (`/api/v1/webhook/:route_name`), health probes (`/healthz`), and session auth endpoints remain unauthenticated.
 
 ### Dual Authentication Credentials
 
-When Protected Mode is active, authenticate via either mechanism:
+Authenticate to protected endpoints via either mechanism:
 
-1. **API Key (Service-to-Service):**
+1. **API Key (Service-to-Service — works in both Dev Mode and Protected Mode):**
    Provide a valid API key in incoming HTTP headers:
    ```http
    X-API-Key: sr_live_a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90
@@ -33,7 +33,7 @@ When Protected Mode is active, authenticate via either mechanism:
    ```http
    Authorization: Bearer sr_live_a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90
    ```
-2. **Admin Session Cookie (Web UI):**
+2. **Admin Session Cookie (Web UI — Protected Mode):**
    Obtained by authenticating via `POST /api/v1/auth/login`. Sets an HTTP-only `relay_session` cookie valid for 24 hours.
 
 ### Endpoint Access Matrix
@@ -41,15 +41,15 @@ When Protected Mode is active, authenticate via either mechanism:
 | Method | Endpoint | Authentication | Purpose |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/v1/webhook/:route_name` | Public (Provider Signature) | Durable webhook ingestion into SQLite WAL |
-| `POST` | `/api/v1/jobs/:route_name` | Public | Asynchronous delivery job enqueue |
-| `ANY` | `/api/v1/relay/:route_name` | Public | Synchronous proxy with automatic retries |
+| `POST` | `/api/v1/jobs/:route_name` | Protected | Asynchronous delivery job enqueue |
+| `ANY` | `/api/v1/relay/:route_name` | Protected | Synchronous proxy with automatic retries |
 | `GET` | `/healthz` | Public | System health check and liveness probe |
 | `GET` | `/api/v1/auth/status` | Public | Check auth requirement and active session |
 | `POST` | `/api/v1/auth/login` | Public (Rate-limited) | Authenticate admin password and obtain session |
 | `POST` | `/api/v1/auth/logout` | Public | Invalidate admin session and clear cookie |
-| `GET` | `/api/v1/routes` | Protected | List all configured routes |
+| `GET` | `/api/v1/routes` | Protected | List all configured routes (secrets masked) |
 | `POST` | `/api/v1/routes` | Protected | Create and hot-reload a new route |
-| `GET` | `/api/v1/routes/:id` | Protected | Retrieve route configuration by ID |
+| `GET` | `/api/v1/routes/:id` | Protected | Retrieve route configuration by ID (secret masked) |
 | `PUT` | `/api/v1/routes/:id` | Protected | Update route configuration by ID |
 | `DELETE` | `/api/v1/routes/:id` | Protected | Delete route configuration by ID |
 | `GET` | `/api/v1/requests` | Protected | List requests with pagination and filters |
@@ -65,9 +65,9 @@ When Protected Mode is active, authenticate via either mechanism:
 
 ---
 
-## 2. Public Ingress & Proxy Endpoints
+## 2. Ingress & Outbound Delivery Endpoints
 
-### `POST /api/v1/webhook/:route_name`
+### `POST /api/v1/webhook/:route_name` *(Public — Provider Signature)*
 Ingests an inbound webhook, verifies cryptographic signatures (if configured on the route), durably commits raw payload bytes to SQLite WAL storage, and enqueues background delivery. Also supports `PUT` and `PATCH`.
 
 - **Headers:**
@@ -88,10 +88,12 @@ Ingests an inbound webhook, verifies cryptographic signatures (if configured on 
   }
   ```
 
-### `POST /api/v1/jobs/:route_name`
-Fire-and-forget asynchronous job ingestion. Persists the request to SQLite WAL storage and schedules immediate delivery by background dispatcher workers.
+### `POST /api/v1/jobs/:route_name` *(Protected)*
+Fire-and-forget asynchronous job ingestion. Requires a valid API key, admin session cookie, or loopback connection in Dev Mode. Persists the request to SQLite WAL storage and schedules immediate delivery by background dispatcher workers.
 
-- **Status Code:** `202 Accepted`
+- **Status Codes:**
+  - `202 Accepted`: Job durably queued in SQLite WAL storage.
+  - `401 Unauthorized`: Missing or invalid API key / session credentials.
 - **Response Format:**
   ```json
   {
@@ -100,19 +102,19 @@ Fire-and-forget asynchronous job ingestion. Persists the request to SQLite WAL s
   }
   ```
 
-### `ANY /api/v1/relay/:route_name`
-Synchronous outbound proxy for routes configured with `mode: "sync"`. Transparently forwards HTTP method, headers, and request body to the configured destination URL.
+### `ANY /api/v1/relay/:route_name` *(Protected)*
+Synchronous outbound proxy for routes configured with `mode: "sync"`. Requires a valid API key, admin session cookie, or loopback connection in Dev Mode. Transparently forwards HTTP method, headers, and request body to the configured destination URL.
 
 - **Automatic Retries:** Automatically retries transient upstream failures (`429 Too Many Requests`, `502`, `503`, `504`) with exponential backoff and randomized full jitter.
 - **Client Disconnect Cancellation:** Cancels in-flight upstream execution immediately if the calling client closes the connection (`r.Context()`), eliminating wasted compute and downstream quota consumption.
-- **Returns:** Transparent upstream status code, response headers, and body.
+- **Returns:** Transparent upstream status code, response headers, and body (`401 Unauthorized` if caller is unauthenticated).
 
 ---
 
 ## 3. Authentication & Sessions (Public)
 
 ### `GET /api/v1/auth/status`
-Checks whether server authentication is required and if the current client is authenticated.
+Checks whether server authentication is required for the current caller (`true` when `RELAY_ADMIN_PASSWORD` is configured or when calling from a non-loopback IP in Dev Mode) and whether the caller is currently authenticated.
 
 - **Response Format:**
   ```json
@@ -125,7 +127,8 @@ Checks whether server authentication is required and if the current client is au
 ### `POST /api/v1/auth/login`
 Authenticates an administrator with the configured `RELAY_ADMIN_PASSWORD` and issues an HTTP-only session cookie.
 
-- **Rate Limiting:** Enforces brute-force lockout (max 5 failed attempts within 5 minutes per IP). Returns `429 Too Many Requests` with a `Retry-After` header when locked.
+- **Rate Limiting & Proxy IP Trust:** Enforces brute-force lockout (max 5 failed attempts within 5 minutes per client IP). Returns `429 Too Many Requests` with a `Retry-After` header when locked. By default, client IP is extracted directly from the TCP socket (`r.RemoteAddr`) to prevent `X-Forwarded-For` header spoofing; proxy headers (`X-Forwarded-For`, `X-Real-IP`) are only trusted when `--trust-proxy` (`RELAY_TRUST_PROXY=true`) is explicitly enabled.
+- **Dev Mode Behavior:** When `RELAY_ADMIN_PASSWORD` is empty, loopback callers receive `200 OK` immediately, while non-loopback callers receive `401 Unauthorized` (must authenticate with an API key instead).
 - **Request Body:**
   ```json
   {
@@ -156,8 +159,11 @@ Invalidates the current session token in memory and clears the `relay_session` c
 
 Routes configure forwarding destinations, retry backoff strategies, timeouts, and cryptographic signature verification. Modifications hot-reload into memory immediately without service restarts.
 
+> [!NOTE] Route Secret Masking
+> To prevent credential leakage, `signature_secret` is **always masked** in HTTP JSON responses across `GET`, `POST`, and `PUT /api/v1/routes*` (formatted as `first4*****last4`, e.g., `"whse*****9a1b"`, or `"********"` for secrets `<= 8` characters). The unmasked secret remains intact in SQLite and the in-memory `RouteRegistry` for cryptographic signature verification.
+
 ### `GET /api/v1/routes`
-Lists all configured routes.
+Lists all configured routes with `signature_secret` values masked.
 
 - **Response Format:**
   ```json
@@ -170,7 +176,7 @@ Lists all configured routes.
       "path": "/api/v1/webhook/stripe",
       "destination_url": "https://api.internal.com/webhooks/stripe",
       "signature_provider": "stripe",
-      "signature_secret": "whsec_...",
+      "signature_secret": "whse*****9a1b",
       "max_attempts": 5,
       "timeout_ms": 10000,
       "retry_backoff_strategy": "exp",
@@ -181,7 +187,7 @@ Lists all configured routes.
   ```
 
 ### `POST /api/v1/routes`
-Creates and registers a new routing configuration.
+Creates and registers a new routing configuration. The returned JSON payload masks `signature_secret`.
 
 - **Request Body:**
   ```json
@@ -201,10 +207,12 @@ Creates and registers a new routing configuration.
 - **Status Code:** `201 Created`
 
 ### `GET /api/v1/routes/:id`
-Retrieves a single route configuration by ULID.
+Retrieves a single route configuration by ULID (with `signature_secret` masked).
 
 ### `PUT /api/v1/routes/:id`
 Updates an existing route configuration by ULID and hot-reloads the internal registry.
+
+- **Safe Secret Preservation:** When updating an inbound route with an active `signature_provider`, if `signature_secret` is omitted (`""`) or matches the currently masked value (e.g., `"whse*****9a1b"` when saving changes from the Web UI), Simple Relay preserves the existing raw secret in storage. Supplying a new plaintext secret rotates it immediately.
 
 ### `DELETE /api/v1/routes/:id`
 Deletes a route configuration by ULID.

@@ -19,6 +19,7 @@ docker run -d \
   -p 8080:8080 \
   -v relay-data:/data \
   -e RELAY_DB_PATH=/data/relay.db \
+  -e RELAY_ADMIN_PASSWORD=admin \
   ghcr.io/simple-relay/simple-relay:latest
 ```
 

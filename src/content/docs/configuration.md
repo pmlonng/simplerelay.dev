@@ -24,9 +24,10 @@ When running Simple Relay as a background daemon (`relay` or `relay serve`), the
 | `--dispatcher-poll-ms`, `-dispatcher-poll-ms` | `RELAY_DISPATCHER_POLL_MS` | `500` | Dispatcher polling interval in milliseconds. |
 | `--cleaner-interval`, `-cleaner-interval` | `RELAY_CLEANER_INTERVAL` | `1h` | Storage retention cleaner execution interval. |
 | `--drain-timeout`, `-drain-timeout` | `RELAY_DRAIN_TIMEOUT` | `30s` | Graceful shutdown drain timeout. |
+| `--trust-proxy`, `-trust-proxy` | `RELAY_TRUST_PROXY` | `false` | Trust `X-Forwarded-For` and `X-Real-IP` headers from reverse proxy for client IP extraction and login rate limiting. |
 | — | `RELAY_RETENTION_SUCCESS_DAYS` | `7` | Retention period in days for successfully delivered records. |
 | — | `RELAY_RETENTION_FAILED_DAYS` | `30` | Retention period in days for failed/dead-lettered records. |
-| — | `RELAY_ADMIN_PASSWORD` | `""` | Optional admin authentication secret for API endpoints. |
+| — | `RELAY_ADMIN_PASSWORD` | `""` | Admin authentication password. When empty (`""`), unauthenticated access is restricted to loopback (`127.0.0.1` / `::1`); remote callers must provide `X-API-Key`. |
 | — | `RELAY_BATCH_SIZE` | `50` | Maximum requests grouped per SQLite WAL write transaction. |
 | — | `RELAY_BATCH_TIMEOUT_MS` | `10` | Maximum batch linger duration before flushing to SQLite. |
 
