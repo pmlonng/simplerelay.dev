@@ -37,3 +37,7 @@ When upstream services fail, inspect:
 
 ### 4. One-Click Dead Letter Queue (DLQ) Replay
 Any delivery in the `FAILED` state features an interactive **Replay** button. Click to requeue the message instantly without re-sending from the external webhook provider.
+
+### 5. Authentication & Route Secret Masking
+- **Loopback Dev Mode vs. Protected Mode:** When running locally on loopback (`127.0.0.1` / `localhost`) with `RELAY_ADMIN_PASSWORD` unset, the dashboard opens directly without a login prompt. When `RELAY_ADMIN_PASSWORD` is configured, the dashboard presents a rate-limited session login screen (`relay_session` HTTP-only cookie).
+- **Masked Route Secrets:** Inbound route `signature_secret` values are automatically masked in API responses (`whse*****9a1b` or `********`). Editing a route in the UI safely preserves the existing secret unless you explicitly type a new secret to rotate it.

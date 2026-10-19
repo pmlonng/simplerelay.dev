@@ -7,8 +7,11 @@ order: 4
 
 Simple Relay provides two operational modes for handling outgoing HTTP requests to external third-party APIs and downstream services:
 
-1. **Synchronous Transparent Proxy (`/api/v1/proxy/sync`)**
-2. **Asynchronous Background Relay (`/api/v1/proxy/async`)**
+1. **Synchronous Transparent Proxy (`/api/v1/relay/:route_name`)**
+2. **Asynchronous Background Jobs (`/api/v1/jobs/:route_name`)**
+
+> [!NOTE] Outbound Endpoint Authentication & Credential Stripping
+> Both `/api/v1/relay/:route_name` and `/api/v1/jobs/:route_name` are **protected endpoints**. Callers must authenticate with a valid API key (`X-API-Key: sr_live_...` or `Authorization: Bearer sr_live_...`), unless connecting from a local loopback socket (`127.0.0.1` / `::1`) in Dev Mode (`RELAY_ADMIN_PASSWORD=""`). Simple Relay automatically strips its own authentication credentials (`X-API-Key`, `Authorization: Bearer sr_live_*`, and `relay_session` cookie) before persisting request logs or forwarding headers to your upstream destination, while preserving any upstream `Authorization` header (such as `Authorization: Bearer $OPENAI_API_KEY`).
 
 ---
 
@@ -32,8 +35,8 @@ flowchart LR
 ### Usage Example
 
 ```bash
-curl -X POST "http://localhost:8080/api/v1/proxy/sync?url=https://api.upstream.com/v1/charges" \
-  -H "Authorization: Bearer sec_key_123" \
+curl -X POST "http://localhost:8080/api/v1/relay/stripe-charges" \
+  -H "X-API-Key: sr_live_..." \
   -H "Content-Type: application/json" \
   -d '{"amount": 2000, "customer": "cus_123"}'
 ```
@@ -56,7 +59,7 @@ In-flight upstream requests are aborted instantaneously, and any scheduled retri
 
 ---
 
-## 2. Asynchronous Background Relay
+## 2. Asynchronous Background Jobs
 
 Use the asynchronous mode for fire-and-forget requests (sending emails, audit logs, analytics events, telemetry).
 
@@ -64,7 +67,7 @@ Use the asynchronous mode for fire-and-forget requests (sending emails, audit lo
 
 ```mermaid
 flowchart TD
-    App["Your Backend"] -->|"POST /proxy/async"| Ingest["Simple Relay Ingest"]
+    App["Your Backend"] -->|"POST /api/v1/jobs/:route_name"| Ingest["Simple Relay Ingest"]
     Ingest -->|"Commit to Storage"| Storage[("Durable Storage")]
     Storage -->|"Immediate ACK (< 2ms)"| ReturnAck["Return 202 Accepted"]
     ReturnAck --> App
@@ -76,8 +79,8 @@ flowchart TD
 ### Usage Example
 
 ```bash
-curl -X POST "http://localhost:8080/api/v1/proxy/async?url=https://api.resend.com/emails" \
-  -H "Authorization: Bearer re_123" \
+curl -X POST "http://localhost:8080/api/v1/jobs/resend-emails" \
+  -H "X-API-Key: sr_live_..." \
   -H "Content-Type: application/json" \
   -d '{"from": "noreply@app.com", "to": "user@gmail.com", "subject": "Welcome!"}'
 ```
@@ -87,7 +90,7 @@ Response:
 HTTP/1.1 202 Accepted
 Content-Type: application/json
 
-{"status":"accepted","request_id":"01j9x0z87q0000000000000000"}
+{"job_id":"01j9x0z87q00000000000000000","status":"queued"}
 ```
 
 The request returns in under 2 milliseconds. The payload is guaranteed to be delivered at-least-once according to your configured retry and backoff policy.
