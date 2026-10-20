@@ -71,7 +71,9 @@ curl -X POST http://localhost:8080/api/v1/routes \
     "signature_secret": "whsec_...",
     "max_attempts": 10,
     "timeout_ms": 10000,
-    "retry_backoff_strategy": "exp"
+    "retry_backoff_strategy": "exp",
+    "base_backoff_ms": 5000,
+    "max_backoff_ms": 900000
   }'
 ```
 

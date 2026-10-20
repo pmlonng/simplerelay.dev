@@ -42,13 +42,18 @@ Full jitter scatters retry execution evenly across time, converting synchronized
 
 ## 2. Retry Exhaustion and the Dead Letter Queue (DLQ)
 
-Every route or relay operation enforces bounded execution:
-- `max_attempts` (default: `5`, configurable up to any positive integer)
-- `initial_interval_ms` (default: `1000` ms)
-- `max_interval_ms` (default: `60000` ms)
-- `timeout_ms` (per-attempt HTTP timeout)
+Simple Relay uses separate default backoff windows for synchronous proxying versus asynchronous background delivery, and supports optional per-route overrides:
+- **Synchronous Proxy (`mode: "sync"`):** `100ms` base backoff, `10s` max backoff (`30s` max `Retry-After`) so open client HTTP connections remain responsive.
+- **Asynchronous Delivery (`mode: "async"`):** `5s` base backoff, `15m` (`900000ms`) max backoff (`15m` max `Retry-After`) so transient downstream container restarts or database failovers do not exhaust all attempts within seconds.
 
-When all retry attempts are exhausted without receiving a successful response code (`2xx`), Simple Relay marks the delivery as `failed` and places it in the **Dead Letter Queue (DLQ)**.
+Every route enforces bounded execution:
+- `max_attempts` (default: `5`, configurable up to any positive integer)
+- `base_backoff_ms` (default: `0` = use engine profile default: `100ms` sync / `5000ms` async)
+- `max_backoff_ms` (default: `0` = use engine profile default: `10000ms` sync / `900000ms` async)
+- `retry_non_idempotent` (default: `false`; on sync routes, controls whether `POST`/`PATCH` calls without an `Idempotency-Key` header are retried)
+- `timeout_ms` (per-attempt HTTP timeout, default: `10000` ms)
+
+When all retry attempts are exhausted without receiving a successful response code (`2xx`), Simple Relay marks the delivery as `dlq` and places it in the **Dead Letter Queue (DLQ)**.
 
 ---
 

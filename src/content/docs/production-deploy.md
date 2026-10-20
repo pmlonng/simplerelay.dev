@@ -27,6 +27,7 @@ services:
       - RELAY_HOST=0.0.0.0
       - RELAY_PORT=8080
       - RELAY_DB_PATH=/data/relay.db
+      - RELAY_SQLITE_SYNC=NORMAL
       - RELAY_WORKER_CONCURRENCY=20
       - RELAY_ADMIN_PASSWORD=change-me-in-production
       - RELAY_TRUST_PROXY=true
@@ -41,9 +42,10 @@ services:
       retries: 3
 ```
 
-> [!IMPORTANT] Authentication & Reverse Proxy Headers
+> [!IMPORTANT] Authentication, Reverse Proxy Headers & Power-Loss Durability
 > - Always set `RELAY_ADMIN_PASSWORD` in production (or authenticate with an `X-API-Key`). When `RELAY_ADMIN_PASSWORD` is unset, unauthenticated access is restricted strictly to loopback (`127.0.0.1` / `::1`)—meaning even local browser traffic crossing a Docker bridge network will require an API key or admin password.
 > - Enable `RELAY_TRUST_PROXY=true` (or `--trust-proxy`) **only** when Simple Relay runs behind a trusted reverse proxy (Nginx, Caddy, Traefik, Cloudflare) that overwrites `X-Forwarded-For` / `X-Real-IP`.
+> - On single-node bare-metal servers without UPS or continuous Litestream replication, set `RELAY_SQLITE_SYNC=FULL` (or `--sqlite-sync FULL`) to enforce strict `fsync` on every SQLite WAL transaction commit against sudden host power loss.
 
 > [!TIP] Zero-Dependency Probes
 > In minimal container environments where `curl` or `wget` are absent, use `relay health` or `relay queue` to perform health checks and queue depth monitoring. See the **[CLI Reference](/docs/cli-reference)** for Docker and Kubernetes probe configurations.

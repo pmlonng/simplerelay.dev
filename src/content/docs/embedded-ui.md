@@ -41,3 +41,9 @@ Any delivery in the `FAILED` state features an interactive **Replay** button. Cl
 ### 5. Authentication & Route Secret Masking
 - **Loopback Dev Mode vs. Protected Mode:** When running locally on loopback (`127.0.0.1` / `localhost`) with `RELAY_ADMIN_PASSWORD` unset, the dashboard opens directly without a login prompt. When `RELAY_ADMIN_PASSWORD` is configured, the dashboard presents a rate-limited session login screen (`relay_session` HTTP-only cookie).
 - **Masked Route Secrets:** Inbound route `signature_secret` values are automatically masked in API responses (`whse*****9a1b` or `********`). Editing a route in the UI safely preserves the existing secret unless you explicitly type a new secret to rotate it.
+
+### 6. Interactive Route Configuration & Backoff Tuning
+Create and modify routes dynamically:
+- Configure per-route `base_backoff_ms` and `max_backoff_ms` overrides with mode-aware pre-filling (`100ms`–`10s` for sync proxy, `5s`–`15m` for async background delivery).
+- Toggle `Retry Non-Idempotent Requests` on synchronous outbound routes to permit safe `POST`/`PATCH` retries.
+- View the active backoff policy (`100ms–10s` or `5s–15m`) directly in the Routes table Policy column.
