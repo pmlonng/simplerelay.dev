@@ -25,6 +25,8 @@ When running Simple Relay as a background daemon (`relay` or `relay serve`), the
 | `--cleaner-interval`, `-cleaner-interval` | `RELAY_CLEANER_INTERVAL` | `1h` | Storage retention cleaner execution interval. |
 | `--drain-timeout`, `-drain-timeout` | `RELAY_DRAIN_TIMEOUT` | `30s` | Graceful shutdown drain timeout. |
 | `--trust-proxy`, `-trust-proxy` | `RELAY_TRUST_PROXY` | `false` | Trust `X-Forwarded-For` and `X-Real-IP` headers from reverse proxy for client IP extraction and login rate limiting. |
+| `--sqlite-sync`, `-sqlite-sync` | `RELAY_SQLITE_SYNC` | `NORMAL` | SQLite WAL `PRAGMA synchronous` durability mode (`NORMAL` or `FULL`). Set to `FULL` on single-node bare-metal hosts without UPS or Litestream replication. |
+| `--max-body-size-mb`, `-max-body-size-mb` | `RELAY_MAX_BODY_SIZE_MB` | `10` | Maximum allowable HTTP request body size in megabytes. |
 | — | `RELAY_RETENTION_SUCCESS_DAYS` | `7` | Retention period in days for successfully delivered records. |
 | — | `RELAY_RETENTION_FAILED_DAYS` | `30` | Retention period in days for failed/dead-lettered records. |
 | — | `RELAY_ADMIN_PASSWORD` | `""` | Admin authentication password. When empty (`""`), unauthenticated access is restricted to loopback (`127.0.0.1` / `::1`); remote callers must provide `X-API-Key`. |
@@ -68,6 +70,9 @@ curl -X POST http://localhost:8080/api/v1/routes \
     "signature_secret": "whsec_...",
     "max_attempts": 10,
     "timeout_ms": 15000,
-    "retry_backoff_strategy": "exp"
+    "retry_backoff_strategy": "exp",
+    "base_backoff_ms": 5000,
+    "max_backoff_ms": 900000,
+    "retry_non_idempotent": false
   }'
 ```

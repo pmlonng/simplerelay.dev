@@ -78,7 +78,7 @@ Ingests an inbound webhook, verifies cryptographic signatures (if configured on 
   - `400 Bad Request`: Route not configured for inbound mode or invalid JSON body.
   - `401 Unauthorized`: Provider signature verification or header rule failed.
   - `404 Not Found`: Route name not found.
-  - `413 Payload Too Large`: Payload exceeds body limit (default: 10MB).
+  - `413 Payload Too Large`: Payload exceeds body limit (`RELAY_MAX_BODY_SIZE_MB`, default: `10` MB).
   - `500 Internal Server Error`: SQLite WAL write failure.
 - **Response Format:**
   ```json
@@ -95,6 +95,7 @@ Fire-and-forget asynchronous job ingestion. Requires a valid API key, admin sess
 - **Status Codes:**
   - `202 Accepted`: Job durably queued in SQLite WAL storage.
   - `401 Unauthorized`: Missing or invalid API key / session credentials.
+  - `413 Payload Too Large`: Payload exceeds body limit (`RELAY_MAX_BODY_SIZE_MB`, default: `10` MB).
 - **Response Format:**
   ```json
   {
@@ -107,9 +108,9 @@ Fire-and-forget asynchronous job ingestion. Requires a valid API key, admin sess
 Synchronous outbound proxy for routes configured with `mode: "sync"`. Requires a valid API key, admin session cookie, or loopback connection in Dev Mode. Transparently forwards HTTP method, headers, and request body to the configured destination URL.
 
 - **Credential Stripping:** Strips internal Simple Relay authentication headers (`X-API-Key`, `Authorization: Bearer sr_live_*`, and `relay_session` cookie) prior to SQLite audit logging and upstream forwarding, while preserving upstream `Authorization` tokens (e.g., `Bearer $OPENAI_API_KEY`).
-- **Automatic Retries:** Automatically retries transient upstream failures (`429 Too Many Requests`, `502`, `503`, `504`) with exponential backoff and randomized full jitter.
+- **Automatic Retries & Non-Idempotent Guardrails:** Automatically retries transient upstream failures (`429 Too Many Requests`, `500`, `502`, `503`, `504`) with exponential backoff and randomized full jitter (`100ms` base, `10s` max default). Idempotent methods (`GET`, `HEAD`, `PUT`, `DELETE`, `OPTIONS`, `TRACE`) always retry up to `max_attempts`; non-idempotent methods (`POST`, `PATCH`) only retry when an `Idempotency-Key` / `X-Relay-Idempotency-Key` header is provided or `retry_non_idempotent: true` is configured on the route.
 - **Client Disconnect Cancellation:** Cancels in-flight upstream execution immediately if the calling client closes the connection (`r.Context()`), eliminating wasted compute and downstream quota consumption.
-- **Returns:** Transparent upstream status code, response headers, and body (`401 Unauthorized` if caller is unauthenticated).
+- **Returns:** Transparent upstream status code, response headers, and body (`401 Unauthorized` if caller is unauthenticated; `413 Payload Too Large` if payload exceeds `RELAY_MAX_BODY_SIZE_MB`, default `10` MB).
 
 ---
 
@@ -182,6 +183,9 @@ Lists all configured routes with `signature_secret` values masked.
       "max_attempts": 5,
       "timeout_ms": 10000,
       "retry_backoff_strategy": "exp",
+      "base_backoff_ms": 5000,
+      "max_backoff_ms": 900000,
+      "retry_non_idempotent": false,
       "created_at": "2026-10-15T01:00:00Z",
       "updated_at": "2026-10-15T01:00:00Z"
     }
@@ -191,6 +195,20 @@ Lists all configured routes with `signature_secret` values masked.
 ### `POST /api/v1/routes`
 Creates and registers a new routing configuration. The returned JSON payload masks `signature_secret`.
 
+- **Fields & Parameters:**
+  - `name` *(string, required)*: Unique slug identifier for the route.
+  - `type` *(string, required)*: `"inbound"` (external webhook ingestion) or `"outbound"` (internal to external delivery).
+  - `mode` *(string, required)*: `"async"` (durable background queue) or `"sync"` (synchronous transparent proxy).
+  - `path` *(string, required)*: Path pattern matching incoming requests (e.g., `/api/v1/webhook/:slug`, `/api/v1/relay/:slug`, `/api/v1/jobs/:slug`).
+  - `destination_url` *(string, required)*: Upstream destination target URL (`http://` or `https://`).
+  - `max_attempts` *(integer, default: `5`)*: Maximum delivery attempts before routing to the DLQ.
+  - `timeout_ms` *(integer, default: `10000`)*: Per-attempt HTTP timeout in milliseconds.
+  - `retry_backoff_strategy` *(string, default: `"exp"`)*: Retry backoff curve: `"exp"` (exponential) or `"linear"`.
+  - `base_backoff_ms` *(integer, default: `0`)*: Minimum retry backoff delay in milliseconds. When `0`, inherits engine defaults (`100ms` for sync proxy, `5000ms` for async background delivery).
+  - `max_backoff_ms` *(integer, default: `0`)*: Maximum retry backoff delay in milliseconds. When `0`, inherits engine defaults (`10000ms` for sync proxy, `900000ms` for async background delivery).
+  - `retry_non_idempotent` *(boolean, default: `false`)*: For sync outbound proxying (`mode: "sync"`), enables automatic retries on non-idempotent HTTP methods (`POST`, `PATCH`) without requiring an `Idempotency-Key` header.
+  - `signature_provider` *(string, optional, default: `"none"`)*: Inbound HMAC provider (`"stripe"`, `"github"`, `"hmac_sha256"`, or `"none"`).
+  - `signature_secret` *(string, optional)*: Cryptographic signing secret.
 - **Request Body:**
   ```json
   {
@@ -203,7 +221,10 @@ Creates and registers a new routing configuration. The returned JSON payload mas
     "signature_secret": "secret123",
     "max_attempts": 5,
     "timeout_ms": 10000,
-    "retry_backoff_strategy": "exp"
+    "retry_backoff_strategy": "exp",
+    "base_backoff_ms": 5000,
+    "max_backoff_ms": 900000,
+    "retry_non_idempotent": false
   }
   ```
 - **Status Code:** `201 Created`

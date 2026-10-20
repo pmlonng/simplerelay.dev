@@ -32,7 +32,7 @@ Download the compiled static binary from GitHub Releases or install via Go:
 go install github.com/simple-relay/simple-relay/cmd/relay@latest
 
 # Run the relay
-relay --listen :8080 --db-path ./relay.db
+relay --port 8080 --db ./relay.db
 ```
 
 ### Option C: Build from Source (Git Clone)
@@ -47,7 +47,7 @@ cd simple-relay
 CGO_ENABLED=0 go build -o relay ./cmd/relay
 
 # Run the compiled binary
-./relay --listen :8080 --db-path ./relay.db
+./relay --port 8080 --db ./relay.db
 ```
 
 Verify that the relay is healthy:
@@ -83,13 +83,31 @@ The raw bytes are durably persisted to storage before the `200 OK` response was 
 
 ## 3. Test Outbound Proxy with Smart Retries
 
-Route an outgoing request to an upstream service through Simple Relay's synchronous retry proxy:
+Route an outgoing request to an upstream service through Simple Relay's synchronous retry proxy (`mode: "sync"`).
+
+Register an outbound route pointing to httpbin:
 
 ```bash
-curl -i "http://localhost:8080/api/v1/proxy/sync?url=https://httpbin.org/status/200"
+curl -X POST http://localhost:8080/api/v1/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "httpbin-test",
+    "type": "outbound",
+    "mode": "sync",
+    "path": "/api/v1/relay/httpbin",
+    "destination_url": "https://httpbin.org/status/200",
+    "max_attempts": 3,
+    "timeout_ms": 5000
+  }'
 ```
 
-If the upstream server returns a `502 Bad Gateway` or `429 Too Many Requests`, Simple Relay automatically catches the failure and retries using exponential backoff with full jitter until the request succeeds or max attempts are reached.
+Now dispatch an outgoing call through the proxy:
+
+```bash
+curl -i "http://localhost:8080/api/v1/relay/httpbin"
+```
+
+If the upstream server returns a `502 Bad Gateway` or `429 Too Many Requests`, Simple Relay automatically catches the failure and retries using exponential backoff with full jitter (`100ms` base, `10s` max default) until the request succeeds or max attempts are reached. Non-idempotent methods (`POST`, `PATCH`) are safeguarded against unintended duplicate side effects unless an `Idempotency-Key` is supplied or `retry_non_idempotent: true` is enabled on the route.
 
 ---
 

@@ -37,17 +37,23 @@ flowchart LR
 ```bash
 curl -X POST "http://localhost:8080/api/v1/relay/stripe-charges" \
   -H "X-API-Key: sr_live_..." \
+  -H "Idempotency-Key: order_12345" \
   -H "Content-Type: application/json" \
   -d '{"amount": 2000, "customer": "cus_123"}'
 ```
 
-### Automatic 429 & 5xx Retries with `Retry-After` Support
+### Automatic 429 & 5xx Retries with `Retry-After` & Idempotency Guardrails
 
 When upstream responds with:
 - `429 Too Many Requests`
-- `502 Bad Gateway`, `503 Service Unavailable`, `504 Gateway Timeout`
+- `500 Internal Server Error`, `502 Bad Gateway`, `503 Service Unavailable`, `504 Gateway Timeout`
 
-Simple Relay intercepts the status code, inspects `Retry-After` headers (both integer seconds and RFC1123 HTTP dates), applies uniform full jitter, and retries the upstream request. Once upstream responds with `2xx` or non-retryable `4xx`, Simple Relay streams the response directly back to the caller.
+Simple Relay intercepts the status code, inspects `Retry-After` headers (both integer seconds and RFC1123 HTTP dates), applies uniform full jitter (`100ms` base, `10s` max by default, or route `base_backoff_ms` / `max_backoff_ms`), and retries the upstream request. Once upstream responds with `2xx` or non-retryable `4xx`, Simple Relay streams the response directly back to the caller.
+
+> [!IMPORTANT] Safe-by-Default Non-Idempotent Sync Retries
+> To prevent duplicate charges or unintended side effects when an upstream times out after committing a transaction:
+> - **Idempotent HTTP methods** (`GET`, `HEAD`, `PUT`, `DELETE`, `OPTIONS`, `TRACE`) are always retried up to `max_attempts`.
+> - **Non-idempotent HTTP methods** (`POST`, `PATCH`) are only retried on `/api/v1/relay/:route_name` if the caller supplies an `Idempotency-Key` (or `X-Relay-Idempotency-Key`) header, **OR** the route explicitly enables `"retry_non_idempotent": true`. Otherwise, Simple Relay executes a single attempt (`maxAttempts = 1`) and returns the upstream result immediately.
 
 ### Client Disconnect Cancellation (Zero Wasted Compute)
 
