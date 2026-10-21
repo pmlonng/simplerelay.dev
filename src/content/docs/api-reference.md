@@ -54,6 +54,7 @@ Authenticate to protected endpoints via either mechanism:
 | `DELETE` | `/api/v1/routes/:id` | Protected | Delete route configuration by ID |
 | `GET` | `/api/v1/requests` | Protected | List requests with pagination and filters |
 | `GET` | `/api/v1/requests/:id` | Protected | Inspect delivery record, payload, and attempts |
+| `POST` | `/api/v1/requests/:id/replay` | Protected | Requeue any historical request (success, failed, dlq) for redelivery |
 | `GET` | `/api/v1/jobs/:job_id` | Protected | Inspect asynchronous job status and attempts |
 | `GET` | `/api/v1/queue/stats` | Protected | Real-time queue metrics and backlog telemetry |
 | `GET` | `/api/v1/dlq` | Protected | List dead-lettered requests |
@@ -322,6 +323,22 @@ Fetch single delivery record including headers, raw payload body, and historical
         "attempted_at": "2026-10-15T01:10:03Z"
       }
     ]
+  }
+  ```
+
+### `POST /api/v1/requests/:id/replay`
+Requeue any persisted request—regardless of whether its status is `success`, `failed`, or `dlq`—resetting its attempts count to 0, status to `pending`, and waking the background dispatcher for immediate delivery.
+
+> [!NOTE] State Conflicts
+> If the request is currently in-flight (`processing`) or waiting in queue (`pending`), the API returns HTTP `409 Conflict`. Replay is supported exclusively for terminal states (`success`, `failed`, `dlq`).
+
+- **Response Format:**
+  ```json
+  {
+    "id": "01j9x0m1p00000000000000001",
+    "status": "pending",
+    "replayed": true,
+    "replayed_at": "2026-10-21T03:00:00Z"
   }
   ```
 

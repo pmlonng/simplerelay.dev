@@ -121,4 +121,5 @@ app.post('/api/webhooks/stripe', async (req, res) => {
 ## Next Steps
 
 - Follow the **[Stripe & GitHub Recipe](/docs/stripe-github)** for copy-paste HMAC examples.
+- Set up **[Local Webhook Inspection with Cloudflare Tunnel](/docs/local-webhook-inspection)** for local payload debugging and one-click replay.
 - Learn about **[Retries and the Dead Letter Queue](/docs/retries-and-dlq)**.

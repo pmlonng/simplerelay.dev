@@ -193,6 +193,39 @@ relay dlq replay-all -y
 
 ---
 
+### 3.4 Request Replay for Local Debugging & Triage (`request replay`)
+
+While `relay dlq replay` is intentionally restricted to exhausted messages in the Dead Letter Queue, `relay request replay` allows operators and developers to requeue **any historical request** regardless of its lifecycle status (`success`, `failed`, or `dlq`):
+
+```bash
+relay request replay <request_id>
+# Or alias
+relay requests replay <request_id>
+```
+
+#### Example Usage:
+```bash
+relay request replay 01j9y9success001
+# Output:
+# Successfully requeued request 01j9y9success001 for delivery.
+```
+
+#### Scripting with JSON Output:
+```bash
+relay request replay 01j9y9success001 -o json
+```
+```json
+{
+  "request_id": "01j9y9success001",
+  "status": "requeued"
+}
+```
+
+> [!TIP] Local Webhook Debugging
+> Replaying `success` requests is particularly useful during local webhook development alongside Cloudflare Tunnel. When testing code modifications in your backend, you can re-run a previous webhook delivery with one CLI command without re-triggering new events from external SaaS dashboards. See the **[Cloudflare Tunnel Inspection Recipe](/docs/local-webhook-inspection)** for complete setup instructions.
+
+---
+
 ## 4. Headless & Container Probe Recipes
 
 Because Simple Relay compiles into a single, static CGO-free binary, container images only need the `relay` binary for both serving traffic and executing health/readiness probes (no `curl`, `wget`, or `jq` needed).
