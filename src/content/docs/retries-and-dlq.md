@@ -102,5 +102,6 @@ relay dlq replay-all -y
 ## Next Steps
 
 - Check out **[Handling 429 Rate Limits](/docs/rate-limits-429)**.
+- Learn how to inspect and replay any request (including 200 OK) during local development in **[Local Webhook Inspection](/docs/local-webhook-inspection)**.
 - Manage and triage DLQ via the terminal with the **[CLI Reference](/docs/cli-reference)**.
 - Review **[REST API Specifications](/docs/api-reference)** for all DLQ endpoints.

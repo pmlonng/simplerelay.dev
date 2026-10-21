@@ -112,6 +112,7 @@ You can view:
 ## What's Next?
 
 - Configure **[HMAC Signatures](/docs/stripe-github)** for Stripe or GitHub.
+- Set up **[Local Webhook Inspection with Cloudflare Tunnel](/docs/local-webhook-inspection)** for crash-resilient restarts and one-click replay during local development.
 - Understand the **[Retries and Dead Letter Queue](/docs/retries-and-dlq)** mechanism.
 - Inspect daemon health, queue backlog, and DLQ from your terminal using the **[CLI Reference](/docs/cli-reference)**.
 - Check out the complete **[REST API Reference](/docs/api-reference)**.

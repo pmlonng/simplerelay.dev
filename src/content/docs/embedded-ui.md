@@ -35,8 +35,9 @@ When upstream services fail, inspect:
 - Exact backoff delay calculated with full jitter.
 - Error messages (e.g. connection refused, TLS handshake timeout, 502 Bad Gateway).
 
-### 4. One-Click Dead Letter Queue (DLQ) Replay
-Any delivery in the `FAILED` state features an interactive **Replay** button. Click to requeue the message instantly without re-sending from the external webhook provider.
+### 4. One-Click Request Replay & DLQ Triage
+- **Replay Any Request:** Click the **Replay** button on any row in the Requests Explorer or inside the inspection drawer to requeue deliveries immediately. This allows re-running previously successful webhooks (`200 OK`) against your backend after making code adjustments—see the **[Local Webhook Inspection Recipe](/docs/local-webhook-inspection)**.
+- **Dead Letter Queue (DLQ):** Deliveries that exhausted all retry policies are isolated in the DLQ view with individual and bulk replay buttons.
 
 ### 5. Authentication & Route Secret Masking
 - **Loopback Dev Mode vs. Protected Mode:** When running locally on loopback (`127.0.0.1` / `localhost`) with `RELAY_ADMIN_PASSWORD` unset, the dashboard opens directly without a login prompt. When `RELAY_ADMIN_PASSWORD` is configured, the dashboard presents a rate-limited session login screen (`relay_session` HTTP-only cookie).
